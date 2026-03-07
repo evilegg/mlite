@@ -24,10 +24,21 @@ def _load(name: str) -> tuple[str, str]:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("name", ["basic", "code_heavy", "emphasis", "table", "nested"])
+@pytest.mark.parametrize("name", ["basic", "code_heavy", "table", "nested"])
 def test_fixture_golden(name: str) -> None:
     src, golden = _load(name)
     assert markdown_to_mlite(src) == golden
+
+
+def test_fixture_emphasis_strip() -> None:
+    src, golden = _load("emphasis")
+    assert markdown_to_mlite(src, preserve_emphasis=False) == golden
+
+
+def test_fixture_emphasis_preserve() -> None:
+    src = (FIXTURES / "emphasis.md").read_text()
+    golden = (FIXTURES / "emphasis.preserve.mlt").read_text()
+    assert markdown_to_mlite(src, preserve_emphasis=True) == golden
 
 
 # ---------------------------------------------------------------------------
