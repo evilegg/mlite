@@ -30,15 +30,15 @@ def test_fixture_golden(name: str) -> None:
     assert markdown_to_mlite(src) == golden
 
 
-def test_fixture_emphasis_strip() -> None:
-    src, golden = _load("emphasis")
-    assert markdown_to_mlite(src, preserve_emphasis=False) == golden
-
-
-def test_fixture_emphasis_preserve() -> None:
-    src = (FIXTURES / "emphasis.md").read_text()
-    golden = (FIXTURES / "emphasis.preserve.mlt").read_text()
-    assert markdown_to_mlite(src, preserve_emphasis=True) == golden
+@pytest.mark.parametrize(
+    "preserve,golden_name",
+    [(False, "emphasis"), (True, "emphasis.preserve")],
+    ids=["strip", "preserve"],
+)
+def test_fixture_emphasis(preserve: bool, golden_name: str) -> None:
+    src = (FIXTURES / "emphasis.md").read_text(encoding="utf-8")
+    golden = (FIXTURES / f"{golden_name}.mlt").read_text(encoding="utf-8")
+    assert markdown_to_mlite(src, preserve_emphasis=preserve) == golden
 
 
 # ---------------------------------------------------------------------------

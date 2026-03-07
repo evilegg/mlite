@@ -42,8 +42,8 @@ CORPUS_DIR = Path(__file__).parent / "corpus"
 # Each file must convert without crashing and produce non-empty output.
 # We do NOT assert per-file savings (some tiny READMEs may break even).
 # Aggregate savings across the corpus must meet the minimum target.
-MIN_AGGREGATE_SAVINGS_PCT_STRIP = 5.0     # conservative floor; spec targets 15-35 %
-MIN_AGGREGATE_SAVINGS_PCT_PRESERVE = 2.0  # preserve mode retains emphasis tokens
+MIN_AGGREGATE_SAVINGS_PCT_STRIP = 15.0    # measured 18.4%; floor set below to absorb corpus churn
+MIN_AGGREGATE_SAVINGS_PCT_PRESERVE = 15.0  # measured 17.9%; preserve costs ~0.5pp vs strip
 
 
 def corpus_files() -> list[Path]:
@@ -85,15 +85,24 @@ def test_corpus_aggregate_savings(capsys: pytest.CaptureFixture[str]) -> None:
 
     for path in files:
         source = path.read_text(encoding="utf-8", errors="replace")
+        src_tok = _count_tokens(source)
+
         try:
             out_strip = markdown_to_mlite(source, preserve_emphasis=False)
-            out_preserve = markdown_to_mlite(source, preserve_emphasis=True)
         except Exception as exc:  # noqa: BLE001
-            rows.append((path.stem, 0, 0, 0.0, 0, 0.0))
-            print(f"  ERROR {path.name}: {exc}", file=sys.stderr)
+            rows.append((path.stem, src_tok, 0, 0.0, 0, 0.0))
+            print(f"  ERROR strip {path.name}: {exc}", file=sys.stderr)
+            total_src += src_tok
             continue
 
-        src_tok = _count_tokens(source)
+        try:
+            out_preserve = markdown_to_mlite(source, preserve_emphasis=True)
+        except Exception as exc:  # noqa: BLE001
+            rows.append((path.stem, src_tok, 0, 0.0, 0, 0.0))
+            print(f"  ERROR preserve {path.name}: {exc}", file=sys.stderr)
+            total_src += src_tok
+            continue
+
         strip_tok = _count_tokens(out_strip)
         preserve_tok = _count_tokens(out_preserve)
         strip_pct = (1 - strip_tok / src_tok) * 100 if src_tok > 0 else 0.0
