@@ -42,7 +42,8 @@ CORPUS_DIR = Path(__file__).parent / "corpus"
 # Each file must convert without crashing and produce non-empty output.
 # We do NOT assert per-file savings (some tiny READMEs may break even).
 # Aggregate savings across the corpus must meet the minimum target.
-MIN_AGGREGATE_SAVINGS_PCT = 5.0  # conservative floor; spec targets 15-35 %
+MIN_AGGREGATE_SAVINGS_PCT_STRIP = 15.0    # measured 18.4%; floor set below to absorb corpus churn
+MIN_AGGREGATE_SAVINGS_PCT_PRESERVE = 15.0  # measured 17.9%; preserve costs ~0.5pp vs strip
 
 
 def corpus_files() -> list[Path]:
@@ -70,49 +71,68 @@ def test_corpus_file_converts(path: Path) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Aggregate savings test: single summary across the whole corpus
+# Aggregate savings test: two-column strip vs preserve comparison
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.corpus
 def test_corpus_aggregate_savings(capsys: pytest.CaptureFixture[str]) -> None:
-    """Token savings across the corpus must meet the minimum threshold."""
+    """Token savings across the corpus — strip mode and preserve mode side by side."""
     files = corpus_files()
 
-    rows: list[tuple[str, int, int, float]] = []
-    total_src = total_out = 0
+    rows: list[tuple[str, int, int, float, int, float]] = []
+    total_src = total_strip = total_preserve = 0
 
     for path in files:
         source = path.read_text(encoding="utf-8", errors="replace")
+        src_tok = _count_tokens(source)
+
         try:
-            result = markdown_to_mlite(source)
+            out_strip = markdown_to_mlite(source, preserve_emphasis=False)
         except Exception as exc:  # noqa: BLE001
-            # Don't let one broken file kill the whole suite — record as 0% savings
-            rows.append((path.stem, 0, 0, 0.0))
-            print(f"  ERROR {path.name}: {exc}", file=sys.stderr)
+            rows.append((path.stem, src_tok, 0, 0.0, 0, 0.0))
+            print(f"  ERROR strip {path.name}: {exc}", file=sys.stderr)
+            total_src += src_tok
             continue
 
-        src_tok = _count_tokens(source)
-        out_tok = _count_tokens(result)
-        savings = (1 - out_tok / src_tok) * 100 if src_tok > 0 else 0.0
+        try:
+            out_preserve = markdown_to_mlite(source, preserve_emphasis=True)
+        except Exception as exc:  # noqa: BLE001
+            rows.append((path.stem, src_tok, 0, 0.0, 0, 0.0))
+            print(f"  ERROR preserve {path.name}: {exc}", file=sys.stderr)
+            total_src += src_tok
+            continue
 
-        rows.append((path.stem, src_tok, out_tok, savings))
+        strip_tok = _count_tokens(out_strip)
+        preserve_tok = _count_tokens(out_preserve)
+        strip_pct = (1 - strip_tok / src_tok) * 100 if src_tok > 0 else 0.0
+        preserve_pct = (1 - preserve_tok / src_tok) * 100 if src_tok > 0 else 0.0
+
+        rows.append((path.stem, src_tok, strip_tok, strip_pct, preserve_tok, preserve_pct))
         total_src += src_tok
-        total_out += out_tok
+        total_strip += strip_tok
+        total_preserve += preserve_tok
 
     # --- Print summary table (visible with -s or on failure) ---
-    header = f"{'File':<40} {'Src':>7} {'Out':>7} {'Saving':>8}"
+    header = (
+        f"{'File':<40} {'Src':>7} {'Strip':>7} {'Saving':>8}  {'Preserve':>8} {'Saving':>8}"
+    )
     divider = "─" * len(header)
     lines = [divider, header, divider]
 
-    for name, src, out, pct in sorted(rows, key=lambda r: r[3]):
-        flag = " !" if pct < 0 else ""
-        lines.append(f"{name:<40} {src:>7,} {out:>7,} {pct:>7.1f}%{flag}")
+    for name, src, strip, strip_pct, preserve, preserve_pct in sorted(rows, key=lambda r: r[3]):
+        flag = " !" if strip_pct < 0 else ""
+        lines.append(
+            f"{name:<40} {src:>7,} {strip:>7,} {strip_pct:>7.1f}%"
+            f"  {preserve:>8,} {preserve_pct:>7.1f}%{flag}"
+        )
 
-    aggregate = (1 - total_out / total_src) * 100 if total_src > 0 else 0.0
+    agg_strip = (1 - total_strip / total_src) * 100 if total_src > 0 else 0.0
+    agg_preserve = (1 - total_preserve / total_src) * 100 if total_src > 0 else 0.0
     lines.append(divider)
     lines.append(
-        f"{'TOTAL / AGGREGATE':<40} {total_src:>7,} {total_out:>7,} {aggregate:>7.1f}%"
+        f"{'TOTAL / AGGREGATE':<40} {total_src:>7,} {total_strip:>7,} {agg_strip:>7.1f}%"
+        f"  {total_preserve:>8,} {agg_preserve:>7.1f}%"
     )
     lines.append(divider)
     lines.append(f"Files: {len(rows)}  |  Tokeniser: cl100k_base")
@@ -120,8 +140,11 @@ def test_corpus_aggregate_savings(capsys: pytest.CaptureFixture[str]) -> None:
     with capsys.disabled():
         print("\n" + "\n".join(lines))
 
-    assert aggregate >= MIN_AGGREGATE_SAVINGS_PCT, (
-        f"Aggregate token savings {aggregate:.1f}% is below the minimum "
-        f"{MIN_AGGREGATE_SAVINGS_PCT}%. "
-        "Check the converter output — something may be inflating token counts."
+    assert agg_strip >= MIN_AGGREGATE_SAVINGS_PCT_STRIP, (
+        f"Strip-mode aggregate savings {agg_strip:.1f}% is below the minimum "
+        f"{MIN_AGGREGATE_SAVINGS_PCT_STRIP}%."
+    )
+    assert agg_preserve >= MIN_AGGREGATE_SAVINGS_PCT_PRESERVE, (
+        f"Preserve-mode aggregate savings {agg_preserve:.1f}% is below the minimum "
+        f"{MIN_AGGREGATE_SAVINGS_PCT_PRESERVE}%."
     )

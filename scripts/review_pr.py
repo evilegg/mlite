@@ -21,6 +21,9 @@ import os
 import re
 import subprocess
 import sys
+from pathlib import Path
+
+_TMP_MSG = Path(__file__).parent.parent / ".tmp_msg"
 
 
 def run(cmd: str, check: bool = True) -> str:
@@ -120,11 +123,13 @@ The "issues" array must be empty ([]) for APPROVE. For REQUEST_CHANGES it must c
 
 
 def post_pr_comment(pr_number: int, body: str) -> None:
-    run(f"gh pr comment {pr_number} --body {json.dumps(body)}")
+    _TMP_MSG.write_text(body, encoding="utf-8")
+    run(f"gh pr comment {pr_number} --body-file {_TMP_MSG}")
 
 
 def post_issue_comment(issue_number: int, body: str) -> None:
-    run(f"gh issue comment {issue_number} --body {json.dumps(body)}")
+    _TMP_MSG.write_text(body, encoding="utf-8")
+    run(f"gh issue comment {issue_number} --body-file {_TMP_MSG}")
 
 
 def merge_pr(pr_number: int, branch: str) -> None:

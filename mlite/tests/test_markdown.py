@@ -14,8 +14,8 @@ FIXTURES = Path(__file__).parent / "fixtures"
 
 def _load(name: str) -> tuple[str, str]:
     """Return (source_md, golden_mlt) for a fixture pair."""
-    src = (FIXTURES / f"{name}.md").read_text()
-    golden = (FIXTURES / f"{name}.mlt").read_text()
+    src = (FIXTURES / f"{name}.md").read_text(encoding="utf-8")
+    golden = (FIXTURES / f"{name}.mlt").read_text(encoding="utf-8")
     return src, golden
 
 
@@ -24,10 +24,21 @@ def _load(name: str) -> tuple[str, str]:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("name", ["basic", "code_heavy", "emphasis", "table", "nested"])
+@pytest.mark.parametrize("name", ["basic", "code_heavy", "table", "nested"])
 def test_fixture_golden(name: str) -> None:
     src, golden = _load(name)
     assert markdown_to_mlite(src) == golden
+
+
+@pytest.mark.parametrize(
+    "preserve,golden_name",
+    [(False, "emphasis"), (True, "emphasis.preserve")],
+    ids=["strip", "preserve"],
+)
+def test_fixture_emphasis(preserve: bool, golden_name: str) -> None:
+    src = (FIXTURES / "emphasis.md").read_text(encoding="utf-8")
+    golden = (FIXTURES / f"{golden_name}.mlt").read_text(encoding="utf-8")
+    assert markdown_to_mlite(src, preserve_emphasis=preserve) == golden
 
 
 # ---------------------------------------------------------------------------
