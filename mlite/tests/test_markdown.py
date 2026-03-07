@@ -14,8 +14,8 @@ FIXTURES = Path(__file__).parent / "fixtures"
 
 def _load(name: str) -> tuple[str, str]:
     """Return (source_md, golden_mlt) for a fixture pair."""
-    src = (FIXTURES / f"{name}.md").read_text()
-    golden = (FIXTURES / f"{name}.mlt").read_text()
+    src = (FIXTURES / f"{name}.md").read_text(encoding="utf-8")
+    golden = (FIXTURES / f"{name}.mlt").read_text(encoding="utf-8")
     return src, golden
 
 
