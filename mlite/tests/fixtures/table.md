@@ -1,0 +1,16 @@
+# Data Tables
+
+## Three Columns
+
+| Name    | Age | City   |
+| ------- | --- | ------ |
+| Alice   | 30  | London |
+| Bob     | 25  | Paris  |
+| Charlie | 35  | Tokyo  |
+
+## Two Columns
+
+| Key | Value |
+| --- | ----- |
+| foo | bar   |
+| baz | qux   |

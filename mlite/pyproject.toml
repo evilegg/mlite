@@ -26,3 +26,8 @@ dev = [
 [project.scripts]
 mlite = "mlite.cli:main"
 mlite-mcp = "mlite.mcp_server:run"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Run everything by default.  Use -m "not corpus" to skip the stress tests.
+markers = ["corpus: real-world Markdown savings stress test"]

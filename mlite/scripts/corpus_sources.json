@@ -1,0 +1,954 @@
+[
+  {
+    "filename": "facebook_react.md",
+    "description": "facebook/react — UI library",
+    "urls": [
+      "https://raw.githubusercontent.com/facebook/react/main/README.md"
+    ]
+  },
+  {
+    "filename": "vuejs_vue.md",
+    "description": "vuejs/vue — progressive JS framework",
+    "urls": [
+      "https://raw.githubusercontent.com/vuejs/vue/main/README.md",
+      "https://raw.githubusercontent.com/vuejs/vue/dev/README.md"
+    ]
+  },
+  {
+    "filename": "angular_angular.md",
+    "description": "angular/angular",
+    "urls": [
+      "https://raw.githubusercontent.com/angular/angular/main/README.md"
+    ]
+  },
+  {
+    "filename": "microsoft_typescript.md",
+    "description": "microsoft/TypeScript",
+    "urls": [
+      "https://raw.githubusercontent.com/microsoft/TypeScript/main/README.md"
+    ]
+  },
+  {
+    "filename": "vercel_next.md",
+    "description": "vercel/next.js",
+    "urls": [
+      "https://raw.githubusercontent.com/vercel/next.js/canary/README.md"
+    ]
+  },
+  {
+    "filename": "vitejs_vite.md",
+    "description": "vitejs/vite",
+    "urls": [
+      "https://raw.githubusercontent.com/vitejs/vite/main/README.md"
+    ]
+  },
+  {
+    "filename": "sveltejs_svelte.md",
+    "description": "sveltejs/svelte",
+    "urls": [
+      "https://raw.githubusercontent.com/sveltejs/svelte/main/README.md",
+      "https://raw.githubusercontent.com/sveltejs/svelte/master/README.md"
+    ]
+  },
+  {
+    "filename": "nestjs_nest.md",
+    "description": "nestjs/nest",
+    "urls": [
+      "https://raw.githubusercontent.com/nestjs/nest/master/README.md"
+    ]
+  },
+  {
+    "filename": "axios_axios.md",
+    "description": "axios/axios — HTTP client",
+    "urls": [
+      "https://raw.githubusercontent.com/axios/axios/v1.x/README.md",
+      "https://raw.githubusercontent.com/axios/axios/main/README.md"
+    ]
+  },
+  {
+    "filename": "webpack_webpack.md",
+    "description": "webpack/webpack",
+    "urls": [
+      "https://raw.githubusercontent.com/webpack/webpack/main/README.md"
+    ]
+  },
+  {
+    "filename": "babel_babel.md",
+    "description": "babel/babel — JS compiler",
+    "urls": [
+      "https://raw.githubusercontent.com/babel/babel/main/README.md"
+    ]
+  },
+  {
+    "filename": "eslint_eslint.md",
+    "description": "eslint/eslint",
+    "urls": [
+      "https://raw.githubusercontent.com/eslint/eslint/main/README.md"
+    ]
+  },
+  {
+    "filename": "prettier_prettier.md",
+    "description": "prettier/prettier",
+    "urls": [
+      "https://raw.githubusercontent.com/prettier/prettier/main/README.md"
+    ]
+  },
+  {
+    "filename": "tailwindlabs_tailwindcss.md",
+    "description": "tailwindlabs/tailwindcss",
+    "urls": [
+      "https://raw.githubusercontent.com/tailwindlabs/tailwindcss/next/README.md",
+      "https://raw.githubusercontent.com/tailwindlabs/tailwindcss/master/README.md"
+    ]
+  },
+  {
+    "filename": "denoland_deno.md",
+    "description": "denoland/deno",
+    "urls": [
+      "https://raw.githubusercontent.com/denoland/deno/main/README.md"
+    ]
+  },
+  {
+    "filename": "huggingface_transformers.md",
+    "description": "huggingface/transformers",
+    "urls": [
+      "https://raw.githubusercontent.com/huggingface/transformers/main/README.md"
+    ]
+  },
+  {
+    "filename": "openai_openai_python.md",
+    "description": "openai/openai-python",
+    "urls": [
+      "https://raw.githubusercontent.com/openai/openai-python/main/README.md"
+    ]
+  },
+  {
+    "filename": "langchain_langchain.md",
+    "description": "langchain-ai/langchain",
+    "urls": [
+      "https://raw.githubusercontent.com/langchain-ai/langchain/master/README.md"
+    ]
+  },
+  {
+    "filename": "ggerganov_llama_cpp.md",
+    "description": "ggerganov/llama.cpp",
+    "urls": [
+      "https://raw.githubusercontent.com/ggerganov/llama.cpp/master/README.md"
+    ]
+  },
+  {
+    "filename": "openai_whisper.md",
+    "description": "openai/whisper",
+    "urls": [
+      "https://raw.githubusercontent.com/openai/whisper/main/README.md"
+    ]
+  },
+  {
+    "filename": "microsoft_deepspeed.md",
+    "description": "microsoft/DeepSpeed",
+    "urls": [
+      "https://raw.githubusercontent.com/microsoft/DeepSpeed/master/README.md"
+    ]
+  },
+  {
+    "filename": "ray_project_ray.md",
+    "description": "ray-project/ray",
+    "urls": [
+      "https://raw.githubusercontent.com/ray-project/ray/master/README.md"
+    ]
+  },
+  {
+    "filename": "pytorch_pytorch.md",
+    "description": "pytorch/pytorch",
+    "urls": [
+      "https://raw.githubusercontent.com/pytorch/pytorch/main/README.md"
+    ]
+  },
+  {
+    "filename": "numpy_numpy.md",
+    "description": "numpy/numpy",
+    "urls": [
+      "https://raw.githubusercontent.com/numpy/numpy/main/README.md"
+    ]
+  },
+  {
+    "filename": "pandas_pandas.md",
+    "description": "pandas-dev/pandas",
+    "urls": [
+      "https://raw.githubusercontent.com/pandas-dev/pandas/main/README.md"
+    ]
+  },
+  {
+    "filename": "scikit_learn.md",
+    "description": "scikit-learn/scikit-learn",
+    "urls": [
+      "https://raw.githubusercontent.com/scikit-learn/scikit-learn/main/README.rst"
+    ]
+  },
+  {
+    "filename": "matplotlib_matplotlib.md",
+    "description": "matplotlib/matplotlib",
+    "urls": [
+      "https://raw.githubusercontent.com/matplotlib/matplotlib/main/README.md"
+    ]
+  },
+  {
+    "filename": "polars_polars.md",
+    "description": "pola-rs/polars",
+    "urls": [
+      "https://raw.githubusercontent.com/pola-rs/polars/main/README.md"
+    ]
+  },
+  {
+    "filename": "autogpt.md",
+    "description": "Significant-Gravitas/AutoGPT",
+    "urls": [
+      "https://raw.githubusercontent.com/Significant-Gravitas/AutoGPT/master/README.md"
+    ]
+  },
+  {
+    "filename": "ollama_ollama.md",
+    "description": "ollama/ollama",
+    "urls": [
+      "https://raw.githubusercontent.com/ollama/ollama/main/README.md"
+    ]
+  },
+  {
+    "filename": "docker_compose.md",
+    "description": "docker/compose",
+    "urls": [
+      "https://raw.githubusercontent.com/docker/compose/main/README.md"
+    ]
+  },
+  {
+    "filename": "kubernetes_kubernetes.md",
+    "description": "kubernetes/kubernetes",
+    "urls": [
+      "https://raw.githubusercontent.com/kubernetes/kubernetes/master/README.md"
+    ]
+  },
+  {
+    "filename": "hashicorp_terraform.md",
+    "description": "hashicorp/terraform",
+    "urls": [
+      "https://raw.githubusercontent.com/hashicorp/terraform/main/README.md"
+    ]
+  },
+  {
+    "filename": "ansible_ansible.md",
+    "description": "ansible/ansible",
+    "urls": [
+      "https://raw.githubusercontent.com/ansible/ansible/devel/README.md",
+      "https://raw.githubusercontent.com/ansible/ansible/stable-2.16/README.md"
+    ]
+  },
+  {
+    "filename": "prometheus_prometheus.md",
+    "description": "prometheus/prometheus",
+    "urls": [
+      "https://raw.githubusercontent.com/prometheus/prometheus/main/README.md"
+    ]
+  },
+  {
+    "filename": "grafana_grafana.md",
+    "description": "grafana/grafana",
+    "urls": [
+      "https://raw.githubusercontent.com/grafana/grafana/main/README.md"
+    ]
+  },
+  {
+    "filename": "helm_helm.md",
+    "description": "helm/helm",
+    "urls": [
+      "https://raw.githubusercontent.com/helm/helm/main/README.md"
+    ]
+  },
+  {
+    "filename": "argoproj_argo_cd.md",
+    "description": "argoproj/argo-cd",
+    "urls": [
+      "https://raw.githubusercontent.com/argoproj/argo-cd/master/README.md"
+    ]
+  },
+  {
+    "filename": "astral_uv.md",
+    "description": "astral-sh/uv — Python package manager",
+    "urls": [
+      "https://raw.githubusercontent.com/astral-sh/uv/main/README.md"
+    ]
+  },
+  {
+    "filename": "astral_ruff.md",
+    "description": "astral-sh/ruff — Python linter",
+    "urls": [
+      "https://raw.githubusercontent.com/astral-sh/ruff/main/README.md"
+    ]
+  },
+  {
+    "filename": "gin_gonic_gin.md",
+    "description": "gin-gonic/gin — Go web framework",
+    "urls": [
+      "https://raw.githubusercontent.com/gin-gonic/gin/master/README.md"
+    ]
+  },
+  {
+    "filename": "gofiber_fiber.md",
+    "description": "gofiber/fiber — Go web framework",
+    "urls": [
+      "https://raw.githubusercontent.com/gofiber/fiber/main/README.md",
+      "https://raw.githubusercontent.com/gofiber/fiber/master/README.md"
+    ]
+  },
+  {
+    "filename": "tokio_rs_tokio.md",
+    "description": "tokio-rs/tokio — async Rust runtime",
+    "urls": [
+      "https://raw.githubusercontent.com/tokio-rs/tokio/master/README.md"
+    ]
+  },
+  {
+    "filename": "tiangolo_fastapi.md",
+    "description": "tiangolo/fastapi",
+    "urls": [
+      "https://raw.githubusercontent.com/tiangolo/fastapi/master/README.md"
+    ]
+  },
+  {
+    "filename": "pydantic_pydantic.md",
+    "description": "pydantic/pydantic",
+    "urls": [
+      "https://raw.githubusercontent.com/pydantic/pydantic/main/README.md"
+    ]
+  },
+  {
+    "filename": "laravel_laravel.md",
+    "description": "laravel/laravel",
+    "urls": [
+      "https://raw.githubusercontent.com/laravel/laravel/master/README.md"
+    ]
+  },
+  {
+    "filename": "spring_boot.md",
+    "description": "spring-projects/spring-boot",
+    "urls": [
+      "https://raw.githubusercontent.com/spring-projects/spring-boot/main/README.adoc"
+    ]
+  },
+  {
+    "filename": "actix_web.md",
+    "description": "actix/actix-web — Rust web framework",
+    "urls": [
+      "https://raw.githubusercontent.com/actix/actix-web/master/README.md"
+    ]
+  },
+  {
+    "filename": "cli_cli.md",
+    "description": "cli/cli — GitHub CLI",
+    "urls": [
+      "https://raw.githubusercontent.com/cli/cli/trunk/README.md"
+    ]
+  },
+  {
+    "filename": "burntsushi_ripgrep.md",
+    "description": "BurntSushi/ripgrep",
+    "urls": [
+      "https://raw.githubusercontent.com/BurntSushi/ripgrep/master/README.md"
+    ]
+  },
+  {
+    "filename": "sharkdp_bat.md",
+    "description": "sharkdp/bat — cat clone",
+    "urls": [
+      "https://raw.githubusercontent.com/sharkdp/bat/master/README.md"
+    ]
+  },
+  {
+    "filename": "sharkdp_fd.md",
+    "description": "sharkdp/fd — find alternative",
+    "urls": [
+      "https://raw.githubusercontent.com/sharkdp/fd/master/README.md"
+    ]
+  },
+  {
+    "filename": "junegunn_fzf.md",
+    "description": "junegunn/fzf — fuzzy finder",
+    "urls": [
+      "https://raw.githubusercontent.com/junegunn/fzf/master/README.md"
+    ]
+  },
+  {
+    "filename": "starship_starship.md",
+    "description": "starship/starship — shell prompt",
+    "urls": [
+      "https://raw.githubusercontent.com/starship/starship/master/README.md"
+    ]
+  },
+  {
+    "filename": "ohmyzsh_ohmyzsh.md",
+    "description": "ohmyzsh/ohmyzsh",
+    "urls": [
+      "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/README.md"
+    ]
+  },
+  {
+    "filename": "nushell_nushell.md",
+    "description": "nushell/nushell",
+    "urls": [
+      "https://raw.githubusercontent.com/nushell/nushell/main/README.md"
+    ]
+  },
+  {
+    "filename": "ziglang_zig.md",
+    "description": "ziglang/zig",
+    "urls": [
+      "https://raw.githubusercontent.com/ziglang/zig/master/README.md"
+    ]
+  },
+  {
+    "filename": "elixir_lang.md",
+    "description": "elixir-lang/elixir",
+    "urls": [
+      "https://raw.githubusercontent.com/elixir-lang/elixir/main/README.md"
+    ]
+  },
+  {
+    "filename": "crystal_lang.md",
+    "description": "crystal-lang/crystal",
+    "urls": [
+      "https://raw.githubusercontent.com/crystal-lang/crystal/master/README.md"
+    ]
+  },
+  {
+    "filename": "microsoft_vscode.md",
+    "description": "microsoft/vscode",
+    "urls": [
+      "https://raw.githubusercontent.com/microsoft/vscode/main/README.md"
+    ]
+  },
+  {
+    "filename": "neovim_neovim.md",
+    "description": "neovim/neovim",
+    "urls": [
+      "https://raw.githubusercontent.com/neovim/neovim/master/README.md"
+    ]
+  },
+  {
+    "filename": "pyenv_pyenv.md",
+    "description": "pyenv/pyenv",
+    "urls": [
+      "https://raw.githubusercontent.com/pyenv/pyenv/master/README.md"
+    ]
+  },
+  {
+    "filename": "nvm_sh_nvm.md",
+    "description": "nvm-sh/nvm",
+    "urls": [
+      "https://raw.githubusercontent.com/nvm-sh/nvm/master/README.md"
+    ]
+  },
+  {
+    "filename": "asdf_vm_asdf.md",
+    "description": "asdf-vm/asdf",
+    "urls": [
+      "https://raw.githubusercontent.com/asdf-vm/asdf/master/README.md"
+    ]
+  },
+  {
+    "filename": "sindresorhus_awesome.md",
+    "description": "sindresorhus/awesome — awesome lists",
+    "urls": [
+      "https://raw.githubusercontent.com/sindresorhus/awesome/main/readme.md"
+    ]
+  },
+  {
+    "filename": "jwasham_coding_interview.md",
+    "description": "jwasham/coding-interview-university",
+    "urls": [
+      "https://raw.githubusercontent.com/jwasham/coding-interview-university/main/README.md"
+    ]
+  },
+  {
+    "filename": "system_design_primer.md",
+    "description": "donnemartin/system-design-primer",
+    "urls": [
+      "https://raw.githubusercontent.com/donnemartin/system-design-primer/master/README.md"
+    ]
+  },
+  {
+    "filename": "anthropic_sdk_python.md",
+    "description": "anthropics/anthropic-sdk-python",
+    "urls": [
+      "https://raw.githubusercontent.com/anthropics/anthropic-sdk-python/main/README.md"
+    ]
+  },
+  {
+    "filename": "dbt_core.md",
+    "description": "dbt-labs/dbt-core",
+    "urls": [
+      "https://raw.githubusercontent.com/dbt-labs/dbt-core/main/README.md"
+    ]
+  },
+  {
+    "filename": "apache_airflow.md",
+    "description": "apache/airflow",
+    "urls": [
+      "https://raw.githubusercontent.com/apache/airflow/main/README.md"
+    ]
+  },
+  {
+    "filename": "celery_celery.md",
+    "description": "celery/celery",
+    "urls": [
+      "https://raw.githubusercontent.com/celery/celery/main/README.rst"
+    ]
+  },
+  {
+    "filename": "redis_py.md",
+    "description": "redis/redis-py",
+    "urls": [
+      "https://raw.githubusercontent.com/redis/redis-py/master/README.md"
+    ]
+  },
+  {
+    "filename": "psf_requests.md",
+    "description": "psf/requests — HTTP for humans",
+    "urls": [
+      "https://raw.githubusercontent.com/psf/requests/main/README.md"
+    ]
+  },
+  {
+    "filename": "httpie_cli.md",
+    "description": "httpie/cli",
+    "urls": [
+      "https://raw.githubusercontent.com/httpie/cli/master/README.md"
+    ]
+  },
+  {
+    "filename": "tiangolo_typer.md",
+    "description": "tiangolo/typer — CLI builder",
+    "urls": [
+      "https://raw.githubusercontent.com/tiangolo/typer/master/README.md"
+    ]
+  },
+  {
+    "filename": "pallets_click.md",
+    "description": "pallets/click",
+    "urls": [
+      "https://raw.githubusercontent.com/pallets/click/main/README.rst"
+    ]
+  },
+  {
+    "filename": "tqdm_tqdm.md",
+    "description": "tqdm/tqdm — progress bars",
+    "urls": [
+      "https://raw.githubusercontent.com/tqdm/tqdm/master/README.rst"
+    ]
+  },
+  {
+    "filename": "textualize_rich.md",
+    "description": "Textualize/rich",
+    "urls": [
+      "https://raw.githubusercontent.com/Textualize/rich/master/README.md"
+    ]
+  },
+  {
+    "filename": "textualize_textual.md",
+    "description": "Textualize/textual",
+    "urls": [
+      "https://raw.githubusercontent.com/Textualize/textual/main/README.md"
+    ]
+  },
+  {
+    "filename": "streamlit_streamlit.md",
+    "description": "streamlit/streamlit",
+    "urls": [
+      "https://raw.githubusercontent.com/streamlit/streamlit/develop/README.md"
+    ]
+  },
+  {
+    "filename": "gradio_app_gradio.md",
+    "description": "gradio-app/gradio",
+    "urls": [
+      "https://raw.githubusercontent.com/gradio-app/gradio/main/README.md"
+    ]
+  },
+  {
+    "filename": "apache_superset.md",
+    "description": "apache/superset",
+    "urls": [
+      "https://raw.githubusercontent.com/apache/superset/master/README.md"
+    ]
+  },
+  {
+    "filename": "supabase_supabase.md",
+    "description": "supabase/supabase",
+    "urls": [
+      "https://raw.githubusercontent.com/supabase/supabase/master/README.md"
+    ]
+  },
+  {
+    "filename": "prisma_prisma.md",
+    "description": "prisma/prisma",
+    "urls": [
+      "https://raw.githubusercontent.com/prisma/prisma/main/README.md"
+    ]
+  },
+  {
+    "filename": "trpc_trpc.md",
+    "description": "trpc/trpc",
+    "urls": [
+      "https://raw.githubusercontent.com/trpc/trpc/main/README.md"
+    ]
+  },
+  {
+    "filename": "shadcn_ui.md",
+    "description": "shadcn-ui/ui",
+    "urls": [
+      "https://raw.githubusercontent.com/shadcn-ui/ui/main/README.md"
+    ]
+  },
+  {
+    "filename": "tanstack_query.md",
+    "description": "TanStack/query",
+    "urls": [
+      "https://raw.githubusercontent.com/TanStack/query/main/README.md"
+    ]
+  },
+  {
+    "filename": "drizzle_orm.md",
+    "description": "drizzle-team/drizzle-orm",
+    "urls": [
+      "https://raw.githubusercontent.com/drizzle-team/drizzle-orm/main/README.md"
+    ]
+  },
+  {
+    "filename": "remix_run.md",
+    "description": "remix-run/remix",
+    "urls": [
+      "https://raw.githubusercontent.com/remix-run/remix/main/README.md"
+    ]
+  },
+  {
+    "filename": "astro_build_astro.md",
+    "description": "withastro/astro",
+    "urls": [
+      "https://raw.githubusercontent.com/withastro/astro/main/README.md"
+    ]
+  },
+  {
+    "filename": "rust_lang_rust.md",
+    "description": "rust-lang/rust",
+    "urls": [
+      "https://raw.githubusercontent.com/rust-lang/rust/master/README.md"
+    ]
+  },
+  {
+    "filename": "golang_go.md",
+    "description": "golang/go",
+    "urls": [
+      "https://raw.githubusercontent.com/golang/go/master/README.md"
+    ]
+  },
+  {
+    "filename": "rails_rails.md",
+    "description": "rails/rails",
+    "urls": [
+      "https://raw.githubusercontent.com/rails/rails/main/README.md"
+    ]
+  },
+  {
+    "filename": "cockroachdb.md",
+    "description": "cockroachdb/cockroach",
+    "urls": [
+      "https://raw.githubusercontent.com/cockroachdb/cockroach/master/README.md"
+    ]
+  },
+  {
+    "filename": "clickhouse.md",
+    "description": "ClickHouse/ClickHouse",
+    "urls": [
+      "https://raw.githubusercontent.com/ClickHouse/ClickHouse/master/README.md"
+    ]
+  },
+  {
+    "filename": "elastic_elasticsearch.md",
+    "description": "elastic/elasticsearch",
+    "urls": [
+      "https://raw.githubusercontent.com/elastic/elasticsearch/main/README.md",
+      "https://raw.githubusercontent.com/elastic/elasticsearch/master/README.md"
+    ]
+  },
+  {
+    "filename": "pingcap_tidb.md",
+    "description": "pingcap/tidb",
+    "urls": [
+      "https://raw.githubusercontent.com/pingcap/tidb/master/README.md"
+    ]
+  },
+  {
+    "filename": "eza_community_eza.md",
+    "description": "eza-community/eza — ls replacement",
+    "urls": [
+      "https://raw.githubusercontent.com/eza-community/eza/main/README.md"
+    ]
+  },
+  {
+    "filename": "zoxide.md",
+    "description": "ajeetdsouza/zoxide — smarter cd",
+    "urls": [
+      "https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/README.md"
+    ]
+  },
+  {
+    "filename": "helix_editor.md",
+    "description": "helix-editor/helix",
+    "urls": [
+      "https://raw.githubusercontent.com/helix-editor/helix/master/README.md"
+    ]
+  },
+  {
+    "filename": "wezterm.md",
+    "description": "wez/wezterm",
+    "urls": [
+      "https://raw.githubusercontent.com/wez/wezterm/main/README.md"
+    ]
+  },
+  {
+    "filename": "alacritty.md",
+    "description": "alacritty/alacritty — terminal emulator",
+    "urls": [
+      "https://raw.githubusercontent.com/alacritty/alacritty/master/README.md"
+    ]
+  },
+  {
+    "filename": "mise_en_place.md",
+    "description": "jdx/mise — dev tools manager",
+    "urls": [
+      "https://raw.githubusercontent.com/jdx/mise/main/README.md"
+    ]
+  },
+  {
+    "filename": "anthropic_sdk_js.md",
+    "description": "anthropics/anthropic-sdk-typescript",
+    "urls": [
+      "https://raw.githubusercontent.com/anthropics/anthropic-sdk-typescript/main/README.md"
+    ]
+  },
+  {
+    "filename": "openai_sdk_node.md",
+    "description": "openai/openai-node",
+    "urls": [
+      "https://raw.githubusercontent.com/openai/openai-node/master/README.md"
+    ]
+  },
+  {
+    "filename": "litellm.md",
+    "description": "BerriAI/litellm",
+    "urls": [
+      "https://raw.githubusercontent.com/BerriAI/litellm/main/README.md"
+    ]
+  },
+  {
+    "filename": "instructor.md",
+    "description": "instructor-ai/instructor",
+    "urls": [
+      "https://raw.githubusercontent.com/instructor-ai/instructor/main/README.md"
+    ]
+  },
+  {
+    "filename": "fastmcp.md",
+    "description": "jlowin/fastmcp",
+    "urls": [
+      "https://raw.githubusercontent.com/jlowin/fastmcp/main/README.md"
+    ]
+  },
+  {
+    "filename": "uvicorn.md",
+    "description": "encode/uvicorn",
+    "urls": [
+      "https://raw.githubusercontent.com/encode/uvicorn/master/README.md"
+    ]
+  },
+  {
+    "filename": "httpx.md",
+    "description": "encode/httpx",
+    "urls": [
+      "https://raw.githubusercontent.com/encode/httpx/master/README.md"
+    ]
+  },
+  {
+    "filename": "sqlmodel.md",
+    "description": "tiangolo/sqlmodel",
+    "urls": [
+      "https://raw.githubusercontent.com/tiangolo/sqlmodel/main/README.md"
+    ]
+  },
+  {
+    "filename": "alembic.md",
+    "description": "sqlalchemy/alembic",
+    "urls": [
+      "https://raw.githubusercontent.com/sqlalchemy/alembic/main/README.rst"
+    ]
+  },
+  {
+    "filename": "mistune.md",
+    "description": "lepture/mistune — Markdown parser",
+    "urls": [
+      "https://raw.githubusercontent.com/lepture/mistune/master/README.md"
+    ]
+  },
+  {
+    "filename": "commonmark_spec.md",
+    "description": "commonmark/commonmark-spec (spec source)",
+    "urls": [
+      "https://raw.githubusercontent.com/commonmark/commonmark-spec/master/README.md"
+    ]
+  },
+  {
+    "filename": "jinja2.md",
+    "description": "pallets/jinja — template engine",
+    "urls": [
+      "https://raw.githubusercontent.com/pallets/jinja/main/README.rst"
+    ]
+  },
+  {
+    "filename": "werkzeug.md",
+    "description": "pallets/werkzeug",
+    "urls": [
+      "https://raw.githubusercontent.com/pallets/werkzeug/main/README.rst"
+    ]
+  },
+  {
+    "filename": "poetry.md",
+    "description": "python-poetry/poetry — Python packaging",
+    "urls": [
+      "https://raw.githubusercontent.com/python-poetry/poetry/main/README.md"
+    ]
+  },
+  {
+    "filename": "hatch.md",
+    "description": "pypa/hatch — Python build tool",
+    "urls": [
+      "https://raw.githubusercontent.com/pypa/hatch/master/README.md"
+    ]
+  },
+  {
+    "filename": "mypy.md",
+    "description": "python/mypy — static type checker",
+    "urls": [
+      "https://raw.githubusercontent.com/python/mypy/master/README.md"
+    ]
+  },
+  {
+    "filename": "black.md",
+    "description": "psf/black — Python formatter",
+    "urls": [
+      "https://raw.githubusercontent.com/psf/black/main/README.md"
+    ]
+  },
+  {
+    "filename": "isort.md",
+    "description": "PyCQA/isort — import sorter",
+    "urls": [
+      "https://raw.githubusercontent.com/PyCQA/isort/main/README.md"
+    ]
+  },
+  {
+    "filename": "pre_commit.md",
+    "description": "pre-commit/pre-commit",
+    "urls": [
+      "https://raw.githubusercontent.com/pre-commit/pre-commit/main/README.md"
+    ]
+  },
+  {
+    "filename": "copier.md",
+    "description": "copier-org/copier — project scaffolding",
+    "urls": [
+      "https://raw.githubusercontent.com/copier-org/copier/main/README.md"
+    ]
+  },
+  {
+    "filename": "cookiecutter.md",
+    "description": "cookiecutter/cookiecutter",
+    "urls": [
+      "https://raw.githubusercontent.com/cookiecutter/cookiecutter/main/README.md"
+    ]
+  },
+  {
+    "filename": "invoke.md",
+    "description": "pyinvoke/invoke — task runner",
+    "urls": [
+      "https://raw.githubusercontent.com/pyinvoke/invoke/main/README.rst"
+    ]
+  },
+  {
+    "filename": "typer.md",
+    "description": "fastapi/typer (mirror)",
+    "urls": [
+      "https://raw.githubusercontent.com/fastapi/typer/master/README.md"
+    ]
+  },
+  {
+    "filename": "loguru.md",
+    "description": "Delgan/loguru — Python logging",
+    "urls": [
+      "https://raw.githubusercontent.com/Delgan/loguru/master/README.md"
+    ]
+  },
+  {
+    "filename": "structlog.md",
+    "description": "hynek/structlog",
+    "urls": [
+      "https://raw.githubusercontent.com/hynek/structlog/main/README.md"
+    ]
+  },
+  {
+    "filename": "attrs.md",
+    "description": "python-attrs/attrs",
+    "urls": [
+      "https://raw.githubusercontent.com/python-attrs/attrs/main/README.md"
+    ]
+  },
+  {
+    "filename": "cattrs.md",
+    "description": "python-attrs/cattrs",
+    "urls": [
+      "https://raw.githubusercontent.com/python-attrs/cattrs/main/README.md"
+    ]
+  },
+  {
+    "filename": "msgspec.md",
+    "description": "jcrist/msgspec — fast serialization",
+    "urls": [
+      "https://raw.githubusercontent.com/jcrist/msgspec/main/README.md"
+    ]
+  },
+  {
+    "filename": "orjson.md",
+    "description": "ijl/orjson — fast JSON",
+    "urls": [
+      "https://raw.githubusercontent.com/ijl/orjson/master/README.md"
+    ]
+  },
+  {
+    "filename": "anyio.md",
+    "description": "agronholm/anyio — async compat",
+    "urls": [
+      "https://raw.githubusercontent.com/agronholm/anyio/master/README.rst"
+    ]
+  },
+  {
+    "filename": "trio.md",
+    "description": "python-trio/trio — async framework",
+    "urls": [
+      "https://raw.githubusercontent.com/python-trio/trio/master/README.rst"
+    ]
+  },
+  {
+    "filename": "aiohttp.md",
+    "description": "aio-libs/aiohttp",
+    "urls": [
+      "https://raw.githubusercontent.com/aio-libs/aiohttp/master/README.rst"
+    ]
+  }
+]
