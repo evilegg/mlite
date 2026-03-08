@@ -24,22 +24,29 @@ def _first_line(docstring: str | None) -> str:
 
 
 def _arg_str(args: ast.arguments) -> str:
-    """Render an ast.arguments node as a compact parameter string."""
+    """Render an ast.arguments node as a compact parameter string with defaults."""
     params: list[str] = []
 
-    # positional-only (Python 3.8+)
-    for arg in args.posonlyargs:
-        params.append(arg.arg if arg.annotation is None else f"{arg.arg}: {ast.unparse(arg.annotation)}")
+    # defaults is right-aligned to posonlyargs + args combined
+    all_positional = args.posonlyargs + args.args
+    defaults_offset = len(all_positional) - len(args.defaults)
 
-    for arg in args.args:
-        params.append(arg.arg if arg.annotation is None else f"{arg.arg}: {ast.unparse(arg.annotation)}")
+    for i, arg in enumerate(all_positional):
+        part = arg.arg if arg.annotation is None else f"{arg.arg}: {ast.unparse(arg.annotation)}"
+        default_index = i - defaults_offset
+        if default_index >= 0:
+            part += f"={ast.unparse(args.defaults[default_index])}"
+        params.append(part)
 
     if args.vararg:
         a = args.vararg
         params.append(f"*{a.arg}" if a.annotation is None else f"*{a.arg}: {ast.unparse(a.annotation)}")
 
-    for arg in args.kwonlyargs:
-        params.append(arg.arg if arg.annotation is None else f"{arg.arg}: {ast.unparse(arg.annotation)}")
+    for arg, default in zip(args.kwonlyargs, args.kw_defaults):
+        part = arg.arg if arg.annotation is None else f"{arg.arg}: {ast.unparse(arg.annotation)}"
+        if default is not None:
+            part += f"={ast.unparse(default)}"
+        params.append(part)
 
     if args.kwarg:
         a = args.kwarg

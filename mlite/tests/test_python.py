@@ -151,5 +151,21 @@ def test_registry_for_mime() -> None:
     assert adapter is not None
 
 
+def test_registry_adapter_converts_with_filename() -> None:
+    # Callers dispatching through the registry must pass filename as a kwarg;
+    # the CLI and MCP server do this using the path they already hold.
+    reg = get_registry()
+    adapter = reg.for_path("utils.py")
+    assert adapter is not None
+    result = adapter.to_mlite("x = 1\n", filename="utils.py")
+    assert result.startswith("= utils.py\n")
+
+
 def test_from_mlite_is_none() -> None:
     assert PYTHON_ADAPTER.from_mlite is None
+
+
+def test_arg_str_renders_defaults() -> None:
+    src = "def f(x: int = 0, y: str = 'hi'): pass\n"
+    out = python_to_mlite(src, filename="m.py", extract_docs=True)
+    assert "f(x: int=0, y: str='hi')" in out
