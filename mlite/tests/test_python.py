@@ -169,3 +169,9 @@ def test_arg_str_renders_defaults() -> None:
     src = "def f(x: int = 0, y: str = 'hi'): pass\n"
     out = python_to_mlite(src, filename="m.py", extract_docs=True)
     assert "f(x: int=0, y: str='hi')" in out
+
+
+def test_arg_str_renders_posonly_separator() -> None:
+    src = "def f(a, b, /, c): pass\n"
+    out = python_to_mlite(src, filename="m.py", extract_docs=True)
+    assert "f(a, b, /, c)" in out

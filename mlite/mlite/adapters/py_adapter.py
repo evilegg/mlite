@@ -38,6 +38,10 @@ def _arg_str(args: ast.arguments) -> str:
             part += f"={ast.unparse(args.defaults[default_index])}"
         params.append(part)
 
+    # Positional-only separator (PEP 570)
+    if args.posonlyargs:
+        params.insert(len(args.posonlyargs), "/")
+
     if args.vararg:
         a = args.vararg
         params.append(f"*{a.arg}" if a.annotation is None else f"*{a.arg}: {ast.unparse(a.annotation)}")
