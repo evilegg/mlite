@@ -1,0 +1,31 @@
+= sample.py
+`python
+"""Utility functions for data processing."""
+
+from typing import Any
+
+
+def process_items(items: list) -> list:
+    """Process a list of items."""
+    return [x for x in items if x]
+
+
+def filter_empty(seq: list) -> list:
+    """Remove falsy values from a sequence."""
+    return [x for x in seq if x]
+
+
+def _private_helper(value: Any) -> str:
+    """Not extracted — private function."""
+    return str(value)
+
+
+class DataProcessor:
+    """Processes data in batch mode."""
+
+    def __init__(self, config: dict) -> None:
+        self.config = config
+
+    def run(self) -> None:
+        pass
+`
