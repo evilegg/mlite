@@ -124,6 +124,15 @@ def test_syntax_error_falls_back_to_basic() -> None:
     assert "`python\n" in out
 
 
+def test_value_error_falls_back_to_basic() -> None:
+    # ast.parse raises ValueError for source containing null bytes
+    src = "x = 1\x00\n"
+    out = python_to_mlite(src, filename="bad.py", extract_docs=True)
+    assert out.startswith("= bad.py\n")
+    assert "== Functions" not in out
+    assert "`python\n" in out
+
+
 # ---------------------------------------------------------------------------
 # Registry tests
 # ---------------------------------------------------------------------------

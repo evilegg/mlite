@@ -83,8 +83,10 @@ def python_to_mlite(
     if extract_docs:
         try:
             module_doc, functions, classes = _extract(source)
-        except SyntaxError:
-            # Fall back to basic envelope on unparseable source
+        except (SyntaxError, ValueError):
+            # Fall back to basic envelope on unparseable source.
+            # ast.parse raises SyntaxError for invalid syntax and ValueError
+            # for source containing null bytes or other illegal content.
             extract_docs = False
         else:
             if module_doc:
@@ -98,11 +100,13 @@ def python_to_mlite(
                 lines.extend(classes)
             lines.append("== Source")
 
-    lines.append("`python")
-    lines.append(source.rstrip("\n"))
-    lines.append("`")
+    # Build the code fence as a single string so source is preserved verbatim.
+    # Ensure source ends with exactly one newline so the closing backtick
+    # sits on its own line without introducing an extra blank line.
+    src_body = source if source.endswith("\n") else source + "\n"
+    fence = "`python\n" + src_body + "`\n"
 
-    return "\n".join(lines) + "\n"
+    return "\n".join(lines) + "\n" + fence
 
 
 PYTHON_ADAPTER = FormatAdapter(
