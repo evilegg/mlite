@@ -115,6 +115,17 @@ def test_extract_no_functions_skips_section() -> None:
     assert "== Functions" not in out
 
 
+def test_extract_all_private_no_source_heading() -> None:
+    # When all symbols are private and there is no module docstring,
+    # no sections are written and == Source must not be emitted either.
+    src = "def _a(): pass\nclass _B: pass\n"
+    out = python_to_mlite(src, filename="m.py", extract_docs=True)
+    assert "== Source" not in out
+    assert "== Functions" not in out
+    # Source content still present in the basic envelope
+    assert "`python\n" in out
+
+
 def test_syntax_error_falls_back_to_basic() -> None:
     src = "def broken(\n"
     out = python_to_mlite(src, filename="bad.py", extract_docs=True)

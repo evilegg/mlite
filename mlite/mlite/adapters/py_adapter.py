@@ -100,16 +100,21 @@ def python_to_mlite(
             # for source containing null bytes or other illegal content.
             extract_docs = False
         else:
+            sections_written = False
             if module_doc:
                 lines.append("== Module Docstring")
                 lines.append(_first_line(module_doc))
+                sections_written = True
             if functions:
                 lines.append("== Functions")
                 lines.extend(functions)
+                sections_written = True
             if classes:
                 lines.append("== Classes")
                 lines.extend(classes)
-            lines.append("== Source")
+                sections_written = True
+            if sections_written:
+                lines.append("== Source")
 
     # Build the code fence as a single string so source is preserved verbatim.
     # Ensure source ends with exactly one newline so the closing backtick
