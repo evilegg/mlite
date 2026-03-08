@@ -186,3 +186,10 @@ def test_arg_str_renders_posonly_separator() -> None:
     src = "def f(a, b, /, c): pass\n"
     out = python_to_mlite(src, filename="m.py", extract_docs=True)
     assert "f(a, b, /, c)" in out
+
+
+def test_arg_str_renders_posonly_with_defaults() -> None:
+    # Defaults must be aligned correctly when both posonly and regular args have defaults
+    src = "def f(a, b=1, /, c=2): pass\n"
+    out = python_to_mlite(src, filename="m.py", extract_docs=True)
+    assert "f(a, b=1, /, c=2)" in out
