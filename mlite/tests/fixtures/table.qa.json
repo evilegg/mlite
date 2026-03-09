@@ -1,0 +1,37 @@
+[
+  {
+    "id": "table-001",
+    "question": "What is Alice's age?",
+    "answer": "30",
+    "type": "table",
+    "source_element": "table"
+  },
+  {
+    "id": "table-002",
+    "question": "What city does Bob live in?",
+    "answer": "Paris",
+    "type": "table",
+    "source_element": "table"
+  },
+  {
+    "id": "table-003",
+    "question": "What is the value for the key \"foo\"?",
+    "answer": "bar",
+    "type": "table",
+    "source_element": "table"
+  },
+  {
+    "id": "table-004",
+    "question": "What is Charlie's city?",
+    "answer": "Tokyo",
+    "type": "table",
+    "source_element": "table"
+  },
+  {
+    "id": "table-005",
+    "question": "What is the value for the key \"baz\"?",
+    "answer": "qux",
+    "type": "table",
+    "source_element": "table"
+  }
+]

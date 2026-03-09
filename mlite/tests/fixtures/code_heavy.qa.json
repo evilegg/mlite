@@ -1,0 +1,37 @@
+[
+  {
+    "id": "code_heavy-001",
+    "question": "What does the Python greet function return?",
+    "answer": "f\"Hello, {name}!\"",
+    "type": "code",
+    "source_element": "code_block"
+  },
+  {
+    "id": "code_heavy-002",
+    "question": "What command installs mlite in the shell example?",
+    "answer": "pip install mlite",
+    "type": "code",
+    "source_element": "code_block"
+  },
+  {
+    "id": "code_heavy-003",
+    "question": "What three programming languages have named code examples?",
+    "answer": "Python, JavaScript, and Bash",
+    "type": "list",
+    "source_element": "code_block"
+  },
+  {
+    "id": "code_heavy-004",
+    "question": "What text does the plain code block (with no language specified) contain?",
+    "answer": "plain block",
+    "type": "code",
+    "source_element": "code_block"
+  },
+  {
+    "id": "code_heavy-005",
+    "question": "What does the document say is preserved verbatim?",
+    "answer": "inline code",
+    "type": "factual",
+    "source_element": "inline_code"
+  }
+]

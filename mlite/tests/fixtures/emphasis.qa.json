@@ -1,0 +1,37 @@
+[
+  {
+    "id": "emphasis-001",
+    "question": "What text appears as inline code in the document?",
+    "answer": "inline code",
+    "type": "emphasis",
+    "source_element": "inline_code"
+  },
+  {
+    "id": "emphasis-002",
+    "question": "What word has strikethrough formatting?",
+    "answer": "strikethrough",
+    "type": "emphasis",
+    "source_element": "strikethrough"
+  },
+  {
+    "id": "emphasis-003",
+    "question": "What is the heading/title of the document?",
+    "answer": "Emphasis Handling",
+    "type": "factual",
+    "source_element": "heading"
+  },
+  {
+    "id": "emphasis-004",
+    "question": "What is the complete text of the last sentence in the document (ignoring any formatting marks)?",
+    "answer": "Nested bold with italic inside.",
+    "type": "emphasis",
+    "source_element": "emphasis"
+  },
+  {
+    "id": "emphasis-005",
+    "question": "Name the two formatting types mentioned in the first sentence.",
+    "answer": "bold and italic",
+    "type": "emphasis",
+    "source_element": "emphasis"
+  }
+]

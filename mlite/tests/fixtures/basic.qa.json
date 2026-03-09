@@ -1,0 +1,37 @@
+[
+  {
+    "id": "basic-001",
+    "question": "What command installs mlite?",
+    "answer": "pip install mlite",
+    "type": "code",
+    "source_element": "code_block"
+  },
+  {
+    "id": "basic-002",
+    "question": "What URL is linked in the document?",
+    "answer": "https://example.com",
+    "type": "factual",
+    "source_element": "link"
+  },
+  {
+    "id": "basic-003",
+    "question": "What two file formats does mlite support according to the nested list?",
+    "answer": "Markdown and HTML",
+    "type": "list",
+    "source_element": "list"
+  },
+  {
+    "id": "basic-004",
+    "question": "What is the title of the third-level heading?",
+    "answer": "Advanced Usage",
+    "type": "factual",
+    "source_element": "heading"
+  },
+  {
+    "id": "basic-005",
+    "question": "How many steps are in the Advanced Usage ordered list?",
+    "answer": "3",
+    "type": "factual",
+    "source_element": "list"
+  }
+]
