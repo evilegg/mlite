@@ -1,0 +1,6 @@
+= Emphasis Handling
+This has *bold text* and *italic text*.
+Also *bold* and *italic* variants.
+Keep `inline code` verbatim.
+And ~~strikethrough~~ text.
+Nested *bold with *italic* inside*.
