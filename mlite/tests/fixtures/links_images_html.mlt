@@ -1,0 +1,5 @@
+= Links and Images
+Visit https://example.com[the docs] for more.
+Bare URL: https://example.com.
+!https://example.com/logo.png[Site logo]
+Image inline: !https://example.com/icon.png[icon] in text.

@@ -92,11 +92,11 @@ def test_read_url_converts_by_extension_fallback(mock_get):
 
 @patch("mlite.mcp_server.httpx.get")
 def test_read_url_passthrough_unsupported_mime(mock_get):
-    mock_get.return_value = _mock_response(
-        "<html>hi</html>", "text/html"
-    )
-    result = read_url("https://example.com/page.html")
-    assert result == "<html>hi</html>"
+    # application/pdf has no registered adapter — should pass through verbatim
+    content = b"%PDF-1.4 binary content"
+    mock_get.return_value = _mock_response(content.decode("latin-1"), "application/pdf")
+    result = read_url("https://example.com/doc.pdf")
+    assert result == content.decode("latin-1")
 
 
 @patch("mlite.mcp_server.httpx.get")
