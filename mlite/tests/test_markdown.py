@@ -57,19 +57,19 @@ def test_heading_levels() -> None:
     assert "====== H6" in out
 
 
-def test_emphasis_stripped_by_default() -> None:
+def test_emphasis_preserved_by_default() -> None:
     src = "**bold** and *italic* text.\n"
     out = markdown_to_mlite(src)
+    assert "*bold*" in out
+    assert "*italic*" in out
+
+
+def test_emphasis_stripped_when_requested() -> None:
+    src = "**bold** and *italic* text.\n"
+    out = markdown_to_mlite(src, preserve_emphasis=False)
     assert "**" not in out
     assert "__" not in out
     assert out.strip() == "bold and italic text."
-
-
-def test_preserve_emphasis() -> None:
-    src = "**bold** and *italic* text.\n"
-    out = markdown_to_mlite(src, preserve_emphasis=True)
-    assert "*bold*" in out
-    assert "*italic*" in out
 
 
 def test_inline_code_preserved() -> None:

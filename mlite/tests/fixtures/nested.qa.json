@@ -1,0 +1,37 @@
+[
+  {
+    "id": "nested-001",
+    "question": "What is the name of the deepest-nested item in the unordered list (three levels deep)?",
+    "answer": "Deep item",
+    "type": "list",
+    "source_element": "list"
+  },
+  {
+    "id": "nested-002",
+    "question": "What are the two sub-items listed under Beta in the ordered list?",
+    "answer": "Beta sub-one and Beta sub-two",
+    "type": "list",
+    "source_element": "list"
+  },
+  {
+    "id": "nested-003",
+    "question": "What is the third item in the top-level unordered list?",
+    "answer": "Third item",
+    "type": "list",
+    "source_element": "list"
+  },
+  {
+    "id": "nested-004",
+    "question": "What text appears in the inner (nested) blockquote?",
+    "answer": "Inner quote.",
+    "type": "factual",
+    "source_element": "blockquote"
+  },
+  {
+    "id": "nested-005",
+    "question": "What is the third item in the top-level ordered list?",
+    "answer": "Gamma",
+    "type": "list",
+    "source_element": "list"
+  }
+]

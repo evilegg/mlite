@@ -171,7 +171,7 @@ def _render_table(token: dict, preserve_emphasis: bool, prefix: str = "") -> lis
 # ---------------------------------------------------------------------------
 
 
-def markdown_to_mlite(source: str, *, preserve_emphasis: bool = False) -> str:
+def markdown_to_mlite(source: str, *, preserve_emphasis: bool = True) -> str:
     """Convert a Markdown string to MLite format.
 
     Args:

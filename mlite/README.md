@@ -16,7 +16,7 @@ A Markdown document is parsed to an AST and re-emitted with every structural tok
 | --------------- | ---------------------------- | ---------------------------- | ---------------- |
 | H2 heading      | `## Installation`            | `== Installation`            | 1 token          |
 | Code fence      | ` ``` ` open + ` ``` ` close | `` ` `` open + `` ` `` close | 4+ tokens/block  |
-| Bold span       | `**text**`                   | `text` (stripped)            | 4 tokens/span    |
+| Bold span       | `**text**`                   | `*text*`                     | 2 tokens/span    |
 | Labeled link    | `[label](url)`               | `url[label]`                 | 2 tokens/link    |
 | Block separator | blank line                   | no blank line                | 1 token/boundary |
 
@@ -55,7 +55,7 @@ Measured with the `cl100k_base` tokeniser (GPT-4 / Claude equivalent) across **1
 
 | Metric                 | Value                  |
 | ---------------------- | ---------------------- |
-| Aggregate savings      | **18.4%**              |
+| Aggregate savings      | **17.9%**              |
 | Corpus size            | 125 files, 490K tokens |
 | Best case              | trpc/trpc README — 83% |
 | Typical range          | 10–35%                 |
@@ -70,7 +70,7 @@ Savings by document type, per spec targets:
 | Badge/link-heavy READMEs    | —           | 40–83%        |
 | RST/plain-text (off-target) | —           | 3–5%          |
 
-The primary savings drivers in order of impact: emphasis stripping, blank-line elimination, code-fence compression, and link-syntax inversion.
+The primary savings drivers in order of impact: blank-line elimination, code-fence compression, link-syntax inversion, and emphasis normalisation (bold/italic both collapse to `*text*`).
 See the [corpus test](tests/test_corpus.py) for the full per-file breakdown.
 
 To reproduce:
@@ -78,6 +78,45 @@ To reproduce:
 ```bash
 pytest tests/test_corpus.py -v -s
 ```
+
+---
+
+## LLM comprehension quality
+
+Token savings only matter if an LLM reading MLite understands the content as well as it would from the original Markdown.
+We measure this with a Q&A agreement eval: for each document we ask Claude the same factual questions with the Markdown source and with the MLite output, then use a judge model to score whether the answers agree.
+
+**Fixture results (25 questions, 9 structural element types):**
+
+| document      | questions | agreement | token savings | score     |
+| ------------- | --------- | --------- | ------------- | --------- |
+| basic.md      | 5         | 100%      | 2.4%          | 1.024     |
+| code_heavy.md | 5         | 100%      | 5.3%          | 1.053     |
+| emphasis.md   | 5         | 100%      | 22.2%         | 1.222     |
+| nested.md     | 5         | 100%      | 2.2%          | 1.022     |
+| table.md      | 5         | 100%      | 20.7%         | 1.207     |
+| **mean**      | **25**    | **100%**  | **9.4%**      | **1.106** |
+
+Agreement is 100% across every structural element — headings, paragraphs, lists, code blocks, inline code, tables, links, blockquotes, emphasis, and strikethrough.
+
+The **score** column is `agreement_rate × (1 + token_savings_pct / 100)`.
+A score above 1.0 means the format delivers equal comprehension at lower cost.
+Every fixture scores above 1.0.
+
+**How the eval works:**
+
+1. Each document has a companion `*.qa.json` file with factual questions and canonical answers.
+2. Claude (`claude-haiku-4-5`) answers each question twice — once from the Markdown source, once from the MLite output.
+3. A judge model compares the two answers and scores agreement.
+4. Answers agree if they convey the same factual content regardless of wording or markdown notation.
+
+To run the eval yourself:
+
+```bash
+ANTHROPIC_API_KEY=<key> python scripts/run_eval.py --fixtures
+```
+
+See [`docs/eval-baseline.md`](docs/eval-baseline.md) for the full baseline record and [`docs/eval-design.md`](docs/eval-design.md) for methodology details.
 
 ---
 
