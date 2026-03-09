@@ -43,8 +43,10 @@ def get_registry() -> AdapterRegistry:
 
 
 def _bootstrap(registry: AdapterRegistry) -> None:
+    from mlite.adapters.html import HTML_ADAPTER
     from mlite.adapters.markdown import MARKDOWN_ADAPTER
     from mlite.adapters.py_adapter import PYTHON_ADAPTER
 
     registry.register(MARKDOWN_ADAPTER)
+    registry.register(HTML_ADAPTER)
     registry.register(PYTHON_ADAPTER)
