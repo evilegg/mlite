@@ -22,6 +22,10 @@ dev = [
     "pytest-cov",
     "tiktoken",
 ]
+eval = [
+    "anthropic>=0.84",
+    "tiktoken",
+]
 
 [project.scripts]
 mlite = "mlite.cli:main"
