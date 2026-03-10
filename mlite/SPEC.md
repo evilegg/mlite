@@ -1,6 +1,7 @@
 # MLite Format Specification
-**Version:** 0.1.0-draft  
-**Status:** Pre-implementation  
+
+**Version:** 0.1.0
+**Status:** Implemented
 **MIME Type:** `text/mlite`  
 **File Extension:** `.mlt`
 
@@ -149,11 +150,16 @@ Admonitions use a `! TYPE` prefix followed by indented content. TYPE is a bare w
 
 #### 3.3.1 Emphasis
 
-**Strong emphasis (bold)** and *italic* are **dropped by default** in MLite. These are presentational markers that carry no semantic signal in LLM inference contexts. Conversion tools MUST strip `**...**`, `__...__`, `*...*`, `_..._` inline markers and emit bare text.
+**Strong emphasis (bold)** and _italic_ are **preserved by default** in MLite, normalized to a single-delimiter `*text*` form (collapsed from both `**bold**` and `_italic_`).
+This retains the author's emphasis signal while costing 2 tokens per span instead of 4.
 
-**Lossless exception:** If the converting tool is operating in `--preserve-emphasis` mode, single-delimiter `*strong*` is used for both bold and italic (collapsed to one form). This trades losslessness for 2 tokens per span instead of 4.
+**Stripping mode:** With `--no-preserve-emphasis` / `preserve_emphasis=False`, all emphasis markers are stripped and bare text is emitted.
+Use this for maximum token savings when emphasis carries no semantic weight.
 
-**Information loss:** Emphasis loss is the single intentional semantic trade-off in the base format. See Section 6 for full analysis.
+**Token cost:** Default (preserved) costs 2 tokens per span vs. 0 when stripped.
+A 1,000-word document with 20 emphasis spans costs ~40 extra tokens in preserve mode.
+
+**Round-trip ambiguity:** Collapsing bold and italic to the same `*form*` is the single intentional round-trip ambiguity in the base format. See Section 6 for full analysis.
 
 #### 3.3.2 Links
 
@@ -184,7 +190,7 @@ Retained as `~~text~~`, identical to GitHub Flavored Markdown.
 
 ## 4. Source Format Extensions
 
-MLite is the canonical *target* format. The following source formats each have a defined conversion path into MLite. Extensions are registered as format adapters and share the same output grammar.
+MLite is the canonical _target_ format. The following source formats each have a defined conversion path into MLite. Extensions are registered as format adapters and share the same output grammar.
 
 ### 4.1 Extension Architecture
 
@@ -205,27 +211,27 @@ Adapters are registered with a central `AdapterRegistry`. The MLite toolchain re
 
 HTML is the highest-priority secondary source. Conversion maps:
 
-| HTML | MLite |
-|------|-------|
-| `<h1>…</h1>` | `= …` |
-| `<h2>` – `<h6>` | `==` – `======` |
-| `<p>…</p>` | bare paragraph |
-| `<ul><li>` | `- ` |
-| `<ol><li>` | `1) ` |
-| `<pre><code class="lang">` | `` `lang `` |
-| `<blockquote>` | `> ` |
-| `<a href="url">label</a>` | `url[label]` |
-| `<img src="url" alt="alt">` | `!url[alt]` |
-| `<table>` | pipe table |
+| HTML                             | MLite                |
+| -------------------------------- | -------------------- |
+| `<h1>…</h1>`                     | `= …`                |
+| `<h2>` – `<h6>`                  | `==` – `======`      |
+| `<p>…</p>`                       | bare paragraph       |
+| `<ul><li>`                       | `- `                 |
+| `<ol><li>`                       | `1) `                |
+| `<pre><code class="lang">`       | `` `lang ``          |
+| `<blockquote>`                   | `> `                 |
+| `<a href="url">label</a>`        | `url[label]`         |
+| `<img src="url" alt="alt">`      | `!url[alt]`          |
+| `<table>`                        | pipe table           |
 | `<strong>`, `<em>`, `<b>`, `<i>` | stripped (bare text) |
-| `<code>` | `` `code` `` |
-| `<hr>` | `---` |
+| `<code>`                         | `` `code` ``         |
+| `<hr>`                           | `---`                |
 
 Script and style tags, HTML comments, and `<head>` content are stripped entirely.
 
 ### 4.3 Code File Adapters
 
-Code files (Python, JavaScript, Rust, Go, etc.) are not converted *to* MLite in the document sense. Instead, they are **wrapped** in a structured MLite envelope that preserves the original source verbatim inside a typed code block, with extracted metadata as MLite structure.
+Code files (Python, JavaScript, Rust, Go, etc.) are not converted _to_ MLite in the document sense. Instead, they are **wrapped** in a structured MLite envelope that preserves the original source verbatim inside a typed code block, with extracted metadata as MLite structure.
 
 **Python example:**
 
@@ -255,15 +261,15 @@ Utility functions for data processing.
 
 The same envelope pattern applies to:
 
-| Language | Adapter Key | Extraction Capability |
-|----------|-------------|----------------------|
-| Python | `text/x-python` | docstrings, function signatures, class hierarchy |
-| JavaScript / TypeScript | `text/javascript` | JSDoc comments, exports, function signatures |
-| Rust | `text/x-rustsrc` | doc comments (`///`), `pub` items, module structure |
-| Go | `text/x-go` | godoc comments, exported symbols |
-| C / C++ | `text/x-csrc` | header comments, function declarations |
-| Shell | `application/x-sh` | comment blocks, function names |
-| SQL | `application/sql` | table definitions, comments |
+| Language                | Adapter Key        | Extraction Capability                               |
+| ----------------------- | ------------------ | --------------------------------------------------- |
+| Python                  | `text/x-python`    | docstrings, function signatures, class hierarchy    |
+| JavaScript / TypeScript | `text/javascript`  | JSDoc comments, exports, function signatures        |
+| Rust                    | `text/x-rustsrc`   | doc comments (`///`), `pub` items, module structure |
+| Go                      | `text/x-go`        | godoc comments, exported symbols                    |
+| C / C++                 | `text/x-csrc`      | header comments, function declarations              |
+| Shell                   | `application/x-sh` | comment blocks, function names                      |
+| SQL                     | `application/sql`  | table definitions, comments                         |
 
 For all code adapters, the source is preserved verbatim in the code block. The envelope metadata is additive, not a replacement.
 
@@ -296,13 +302,27 @@ The following tool definition enables Claude sessions to automatically request M
       },
       "source_format": {
         "type": "string",
-        "enum": ["markdown", "html", "python", "javascript", "typescript", "rust", "go", "c", "cpp", "shell", "sql", "json", "yaml"],
+        "enum": [
+          "markdown",
+          "html",
+          "python",
+          "javascript",
+          "typescript",
+          "rust",
+          "go",
+          "c",
+          "cpp",
+          "shell",
+          "sql",
+          "json",
+          "yaml"
+        ],
         "description": "The format of the source content."
       },
       "preserve_emphasis": {
         "type": "boolean",
-        "default": false,
-        "description": "If true, retain emphasis markers as single-delimiter *text* form. Use when the document's emphasis carries semantic meaning (e.g., technical specifications, legal documents)."
+        "default": true,
+        "description": "If true (default), retain emphasis as single-delimiter *text* form. Set to false to strip all emphasis for maximum token savings."
       },
       "extract_docs": {
         "type": "boolean",
@@ -318,11 +338,13 @@ The following tool definition enables Claude sessions to automatically request M
 ### 5.1 Tool Invocation Guidelines
 
 Claude SHOULD invoke `render_as_mlite` when:
+
 - A Markdown document exceeds ~500 tokens and will be re-read or referenced multiple times in the session
 - An HTML page is provided for content extraction or summarization
 - A code file is provided for review, explanation, or transformation
 
 Claude SHOULD NOT invoke `render_as_mlite` when:
+
 - The document is short (< ~500 tokens)
 - The user has explicitly requested the original format be preserved
 - The task is purely syntactic (e.g., "count the headings in this Markdown file")
@@ -347,31 +369,33 @@ MLite's design aspires to be lossless for semantic content. The following is an 
 
 ### 6.1 Intentional Losses (Base Format)
 
-| Element | What is Lost | Severity | Justification |
-|---------|-------------|----------|---------------|
-| Bold / strong emphasis | Visual weight signal | Low | LLMs derive emphasis from context, not delimiters. No downstream NLP task benefits from `**` markers. |
-| Italic emphasis | Stylistic distinction | Low | Same as above. Exception: titles of works (e.g., *Moby Dick*) — these should be preserved with `--preserve-emphasis`. |
-| HTML attributes beyond `href`/`src`/`alt` | `class`, `id`, `data-*`, ARIA roles | Medium | Irrelevant to LLM content comprehension. Loss matters if the task is HTML analysis rather than content extraction. |
-| CSS / `<style>` blocks | All styling information | High (if task is CSS-related) | Out of scope for content extraction. The HTML adapter MUST NOT strip style blocks if `source_format` is `css` or the task is stylesheet analysis. |
-| Markdown HTML passthrough | Raw inline HTML in `.md` files | Medium | Stripped. If the embedded HTML is structurally meaningful, the document should be processed through the HTML adapter instead. |
-| Table alignment markers | Column alignment | Negligible | Purely presentational. |
-| Ordered list start values | `start="5"` on `<ol>` | Low | Lost. If exact numbering semantics matter, use `--preserve-list-start`. |
+| Element                                   | What is Lost                        | Severity                      | Justification                                                                                                                                     |
+| ----------------------------------------- | ----------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bold / strong emphasis                    | Visual weight signal                | Low                           | LLMs derive emphasis from context, not delimiters. No downstream NLP task benefits from `**` markers.                                             |
+| Italic emphasis                           | Stylistic distinction               | Low                           | Same as above. Exception: titles of works (e.g., _Moby Dick_) — these should be preserved with `--preserve-emphasis`.                             |
+| HTML attributes beyond `href`/`src`/`alt` | `class`, `id`, `data-*`, ARIA roles | Medium                        | Irrelevant to LLM content comprehension. Loss matters if the task is HTML analysis rather than content extraction.                                |
+| CSS / `<style>` blocks                    | All styling information             | High (if task is CSS-related) | Out of scope for content extraction. The HTML adapter MUST NOT strip style blocks if `source_format` is `css` or the task is stylesheet analysis. |
+| Markdown HTML passthrough                 | Raw inline HTML in `.md` files      | Medium                        | Stripped. If the embedded HTML is structurally meaningful, the document should be processed through the HTML adapter instead.                     |
+| Table alignment markers                   | Column alignment                    | Negligible                    | Purely presentational.                                                                                                                            |
+| Ordered list start values                 | `start="5"` on `<ol>`               | Low                           | Lost. If exact numbering semantics matter, use `--preserve-list-start`.                                                                           |
 
 ### 6.2 Recoverable Losses (`--preserve-emphasis` mode)
 
-| Element | Recovery Mechanism |
-|---------|--------------------|
-| Bold / italic | Collapsed to single `*delimiter*` form; distinguishable from source on round-trip if original form is annotated |
-| Nested emphasis | Flattened to single level |
+| Element         | Recovery Mechanism                                                                                              |
+| --------------- | --------------------------------------------------------------------------------------------------------------- |
+| Bold / italic   | Collapsed to single `*delimiter*` form; distinguishable from source on round-trip if original form is annotated |
+| Nested emphasis | Flattened to single level                                                                                       |
 
 ### 6.3 Losses by Adapter Type
 
 **HTML adapter:**
+
 - `id` and `class` attributes on headings (anchor links) — lost. Future versions may encode as `= Heading {#anchor}`.
 - `<details>` / `<summary>` — collapsed to paragraph. Future work.
 - Embedded `<script>` blocks — stripped. This is intentional and not recoverable.
 
 **Code adapters:**
+
 - No source loss. The code block is the verbatim original.
 - Extracted doc metadata is additive, not substitutive.
 
@@ -381,14 +405,16 @@ The stripping of bold/italic is the most contested decision in this spec. The ar
 
 1. LLMs are trained on vast corpora with inconsistent emphasis usage. The semantic signal of `**word**` vs `word` is weak.
 2. Emphasis tokens consume 4 tokens per span (open-open, content, close-close) for bold. A 1,000-word document with 20 bold spans saves 80 tokens — measurable.
-3. The format is AI-*first*. Human reading is not a design constraint.
+3. The format is AI-_first_. Human reading is not a design constraint.
 
 The argument for preserving it (why `--preserve-emphasis` exists):
+
 1. Technical specs and legal documents use emphasis with specific intent (e.g., RFC 2119 keywords are often bolded).
 2. Authors of documents like API references may bold return types or parameter names structurally.
 3. Round-trippability requires preserving it in some form.
 
-The default is to strip. Use `--preserve-emphasis` for technical specifications, legal documents, and cases where the authoring intent is highly structured.
+The default is to preserve (`preserve_emphasis=True`).
+Use `--no-preserve-emphasis` only when emphasis carries no semantic weight and maximum token savings are the priority.
 
 ---
 
@@ -396,16 +422,17 @@ The default is to strip. Use `--preserve-emphasis` for technical specifications,
 
 The following estimates are based on GPT-family tokenizer behavior and are indicative, not guaranteed, for all model tokenizers.
 
-| Document Type | Expected Savings |
-|---------------|-----------------|
-| Prose with headings and lists | 12–18% |
-| API documentation (heavy code blocks) | 20–30% |
-| HTML pages (news articles, docs sites) | 30–45% |
-| Source code files with docstrings | 5–10% (envelope overhead amortized) |
-| Dense table content | 8–12% |
-| Mixed documentation (prose + code + tables) | 18–28% |
+| Document Type                               | Expected Savings                    |
+| ------------------------------------------- | ----------------------------------- |
+| Prose with headings and lists               | 12–18%                              |
+| API documentation (heavy code blocks)       | 20–30%                              |
+| HTML pages (news articles, docs sites)      | 30–45%                              |
+| Source code files with docstrings           | 5–10% (envelope overhead amortized) |
+| Dense table content                         | 8–12%                               |
+| Mixed documentation (prose + code + tables) | 18–28%                              |
 
 Primary savings drivers in order of impact:
+
 1. HTML tag stripping (HTML adapter)
 2. Code fence closing line elimination
 3. Blank line elimination between blocks
@@ -430,6 +457,7 @@ Accept: text/mlite;q=0.9, text/html;q=0.8, text/plain;q=0.6
 ```
 
 Servers supporting MLite MUST:
+
 1. Check for `text/mlite` in the `Accept` header
 2. If present and content can be served as MLite, respond with `Content-Type: text/mlite`
 3. Include `Vary: Accept` in the response to enable correct caching behavior
@@ -495,14 +523,14 @@ Parsers encountering an unknown version SHOULD warn and attempt best-effort pars
 
 The following sigil namespace is reserved for future use:
 
-| Sigil | Reserved For |
-|-------|-------------|
-| `@` | Metadata / frontmatter key-value pairs |
-| `%` | Directives (version, encoding, adapter hints) |
-| `^` | Footnote definitions |
-| `[^ref]` | Footnote references (inline) |
-| `::` | Definition lists (already allocated, Section 3.2.8) |
-| `! TYPE` | Admonitions (already allocated, Section 3.2.9) |
+| Sigil    | Reserved For                                        |
+| -------- | --------------------------------------------------- |
+| `@`      | Metadata / frontmatter key-value pairs              |
+| `%`      | Directives (version, encoding, adapter hints)       |
+| `^`      | Footnote definitions                                |
+| `[^ref]` | Footnote references (inline)                        |
+| `::`     | Definition lists (already allocated, Section 3.2.8) |
+| `! TYPE` | Admonitions (already allocated, Section 3.2.9)      |
 
 ### 9.3 Frontmatter
 
@@ -573,6 +601,7 @@ More critically, the proposal breaks down at code blocks, which are the highest-
 ```
 
 The consequences are severe:
+
 - Every line of code pays an additional indentation prefix in tokens, directly counteracting the format's primary goal
 - Code copied out of an MLite document is broken and requires dedenting before it runs
 - Python code nested inside a deeply scoped MLite section would need multiple levels of artificial indentation, corrupting its apparent structure
@@ -583,7 +612,7 @@ The single closing backtick is essentially free — one character on one line. I
 
 **LLM generation reliability** is a further concern. When an LLM generates MLite, indentation-based structure requires the model to maintain an implicit depth counter as hidden state across lines. Sigil-based structure is locally self-describing: each line encodes its own nesting level without reference to prior lines. This is meaningfully more reliable for generation, and generation reliability matters if MLite is used as an output format (e.g., a model summarizing a document into MLite).
 
-**What was partially adopted:** The core insight — that a single `=` sigil is cleaner than sigil counting — is valid and worth revisiting for a future version. A hybrid that applies indentation-based depth *only to headings* (which are short, rarely nest past 3 levels, and never contain code) would capture the readability benefit at minimal tokenization cost. This is deferred to a post-v1 consideration. For v0.1, sigil counting is retained for its self-describing, generation-friendly properties.
+**What was partially adopted:** The core insight — that a single `=` sigil is cleaner than sigil counting — is valid and worth revisiting for a future version. A hybrid that applies indentation-based depth _only to headings_ (which are short, rarely nest past 3 levels, and never contain code) would capture the readability benefit at minimal tokenization cost. This is deferred to a post-v1 consideration. For v0.1, sigil counting is retained for its self-describing, generation-friendly properties.
 
 **Decision:** Sigil counting retained for v0.1. Single-sigil + indentation for headings deferred as a candidate for v0.2 behind a `%heading-style indent` directive, allowing both modes to coexist during evaluation.
 
@@ -593,18 +622,21 @@ The single closing backtick is essentially free — one character on one line. I
 
 **Proposal:** Rather than a text format, represent documents as a JSON AST — the canonical intermediate representation used by most Markdown parsers (e.g., `commonmark`, `pandoc`).
 
-**Why it was rejected:** JSON AST representations are significantly *more* token-intensive than their source Markdown, not less. A short paragraph and heading in Markdown AST form:
+**Why it was rejected:** JSON AST representations are significantly _more_ token-intensive than their source Markdown, not less. A short paragraph and heading in Markdown AST form:
 
 ```json
 {
   "type": "document",
   "children": [
-    { "type": "heading", "depth": 2, "children": [
-      { "type": "text", "value": "Getting Started" }
-    ]},
-    { "type": "paragraph", "children": [
-      { "type": "text", "value": "Install the package." }
-    ]}
+    {
+      "type": "heading",
+      "depth": 2,
+      "children": [{ "type": "text", "value": "Getting Started" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [{ "type": "text", "value": "Install the package." }]
+    }
   ]
 }
 ```
@@ -617,7 +649,7 @@ This is 3–5× the token count of the source. JSON is the right intermediate fo
 
 **Proposal:** The most token-efficient representation is plain text with all structure removed. Strip headings, list markers, code fences, and all delimiters.
 
-**Why it was rejected:** This approach conflates token efficiency with information destruction. Structure is meaning. A heading is not decoration — it scopes everything that follows it. A code block boundary is not decoration — it signals a mode switch from prose to executable content. An LLM reading a stripped document must reconstruct structural inference from prose cues alone, which is lower quality reasoning than reading structure that is explicitly encoded. The goal of MLite is *token reduction without information loss*, not maximum compression.
+**Why it was rejected:** This approach conflates token efficiency with information destruction. Structure is meaning. A heading is not decoration — it scopes everything that follows it. A code block boundary is not decoration — it signals a mode switch from prose to executable content. An LLM reading a stripped document must reconstruct structural inference from prose cues alone, which is lower quality reasoning than reading structure that is explicitly encoded. The goal of MLite is _token reduction without information loss_, not maximum compression.
 
 ---
 
@@ -625,7 +657,7 @@ This is 3–5× the token count of the source. JSON is the right intermediate fo
 
 **Proposal:** Use a lightweight XML-like format with short tag names: `<h>`, `<p>`, `<c>`, `<l>`.
 
-**Why it was rejected:** Any tag-based format has a fundamental asymmetry: opening and closing tags both consume tokens. MLite's block-prefix design means every block pays a small fixed cost at the *start* of the line and zero cost to close (the next sigil-prefixed line implicitly closes the previous block). For a document with 50 blocks, tag-based formats pay 100 structural token-events; MLite pays 50.
+**Why it was rejected:** Any tag-based format has a fundamental asymmetry: opening and closing tags both consume tokens. MLite's block-prefix design means every block pays a small fixed cost at the _start_ of the line and zero cost to close (the next sigil-prefixed line implicitly closes the previous block). For a document with 50 blocks, tag-based formats pay 100 structural token-events; MLite pays 50.
 
 Short XML tags also tokenize poorly. `<h>` is typically 3 tokens (`<`, `h`, `>`). The `=` sigil is 1 token. Closing tags are entirely absent in MLite for prose blocks.
 
@@ -643,32 +675,44 @@ Short XML tags also tokenize poorly. `<h>` is typically 3 tokens (`<`, `h`, `>`)
 
 **Proposal considered:** Use `|lang` as the code block opener instead of `` `lang ``, since the single backtick is already used for inline code in Markdown. Several alternatives were evaluated:
 
-| Sigil | Trade-off |
-|-------|-----------|
-| `` `lang `` | Reuses inline-code sigil; distinguished by being alone on a line with no closing backtick on the same line |
-| `\|lang` | Clean disambiguation, but `\|` is heavily used in table syntax |
-| `@code lang` | Verbose; `@` is reserved for frontmatter metadata |
-| `::lang` | Conflicts with definition list sigil |
+| Sigil        | Trade-off                                                                                                  |
+| ------------ | ---------------------------------------------------------------------------------------------------------- |
+| `` `lang ``  | Reuses inline-code sigil; distinguished by being alone on a line with no closing backtick on the same line |
+| `\|lang`     | Clean disambiguation, but `\|` is heavily used in table syntax                                             |
+| `@code lang` | Verbose; `@` is reserved for frontmatter metadata                                                          |
+| `::lang`     | Conflicts with definition list sigil                                                                       |
 
 **Decision:** Single backtick retained. The disambiguation rule is simple: a backtick alone at the start of a line followed by an identifier and newline is a code block opener; a backtick inline within a line is inline code. This is locally unambiguous and consistent with how most tokenizers already handle the character.
 
 ---
 
-## 11. Open Questions (Pre-Implementation)
+## 11. Open Questions (v0.2+)
 
-1. **Emphasis round-trip fidelity.** If `--preserve-emphasis` collapses bold and italic to a single form, round-tripping back to the original is ambiguous. Should the collapsed form distinguish bold vs italic, or is full collapse acceptable?
+1. **Emphasis round-trip fidelity.** _Resolved for v0.1:_ default is `preserve_emphasis=True`, collapsing `**bold**` and `_italic_` to `*text*`.
+   Full disambiguation (separate bold vs italic forms) is deferred to v0.2.
 
-2. **Table complexity.** Multi-line cells and merged cells (colspan/rowspan) have no MLite representation. Are these in scope, or do they fall back to a literal HTML passthrough block?
+2. **Table complexity.** Multi-line cells and merged cells (colspan/rowspan) have no MLite representation.
+   Current behavior: best-effort cell extraction; complex tables fall back to pipe table with flattened content.
+   Full solution (HTML passthrough block for unsupported tables) is v0.2 work.
 
-3. **Anchor IDs on headings.** Documentation sites depend on `{#anchor}` heading IDs for deep links. The format should reserve `= Heading {#id}` syntax rather than discovering a conflict later.
+3. **Anchor IDs on headings.** Documentation sites depend on `{#anchor}` heading IDs for deep links.
+   The `= Heading {#id}` syntax is reserved but not yet emitted by any adapter.
+   Parser should accept it without error (forward-compatible).
 
-4. **Math blocks.** LaTeX math (`$$...$$`) is common in technical documentation. Should MLite define a math block sigil, or treat math as a typed code block (`` `latex ``)?
+4. **Math blocks.** LaTeX math (`$$...$$`) is currently emitted as `` `latex `` typed code blocks.
+   A dedicated math block sigil is a v0.2 consideration.
 
-5. **Right-to-left (RTL) text.** The format makes no assumptions about text directionality. Should a `%rtl` directive be reserved?
+5. **Right-to-left (RTL) text.** No assumptions made about text directionality.
+   A `%rtl` directive is reserved for future use.
 
-6. **Streaming.** MLite's block-prefix design should be well-suited to streaming (each line is self-describing). This should be confirmed with a streaming parser implementation and documented explicitly.
+6. **Streaming.** MLite's block-prefix design is inherently streaming-friendly (each line is self-describing).
+   A streaming parser implementation and explicit documentation are deferred to post-v1.
 
-7. **Tokenizer variance.** Token savings estimates assume GPT-family tokenizers. Analysis should be extended to LLaMA, Mistral, Gemini, and Claude's own tokenizer to verify that savings are consistent across the ecosystem.
+7. **Tokenizer variance.** Token savings estimates assume GPT-family tokenizers (cl100k_base).
+   Cross-tokenizer analysis (LLaMA, Mistral, Gemini, Claude) is post-v1 work.
+
+8. **Additional code adapters.** JavaScript/TypeScript, Rust, Go, C, Shell, SQL adapters are specified in §4.3 but not yet implemented.
+   The Python adapter (`py_adapter.py`) is the reference implementation for the envelope pattern.
 
 ---
 
@@ -689,26 +733,26 @@ ADMONITION   ! warning\n  indented content
 DEFINITION   :: term\n   definition
 FRONTMATTER  @key value  (before first block)
 DIRECTIVE    %mlite 0.1
-EMPHASIS     stripped (default) or *text* (--preserve-emphasis)
+EMPHASIS     *text* (default, preserved) or stripped (--no-preserve-emphasis)
 ```
 
 ---
 
 ## Appendix B: Comparison Table
 
-| Feature | Markdown | MLite | HTML |
-|---------|----------|-------|------|
-| Heading tokens (H2) | 3 (`##`, ` `, text) | 3 (`==`, ` `, text) | 5+ (`<h2>`, text, `</h2>`) |
-| Code fence (open+close) | 2 lines, 6+ tokens | 2 lines, 2 tokens | 2 lines, 15+ tokens |
-| Bold span | 4 delimiters | 0 (stripped) | 2 tags |
-| Labeled link | 4 structural tokens | 2 structural tokens | 3 structural tokens |
-| Block separator | 2 newlines | 1 newline | implicit |
-| Machine-readable | ✗ (ambiguous) | ✓ | ✓ |
-| AI-first | ✗ | ✓ | ✗ |
-| Human-authorable | ✓ | ✗ (generated) | ✗ |
-| HTTP negotiable | ✗ | ✓ | ✓ |
-| Streamable | partial | ✓ | partial |
+| Feature                 | Markdown            | MLite                                 | HTML                       |
+| ----------------------- | ------------------- | ------------------------------------- | -------------------------- |
+| Heading tokens (H2)     | 3 (`##`, ` `, text) | 3 (`==`, ` `, text)                   | 5+ (`<h2>`, text, `</h2>`) |
+| Code fence (open+close) | 2 lines, 6+ tokens  | 2 lines, 2 tokens                     | 2 lines, 15+ tokens        |
+| Bold span               | 4 delimiters        | 2 (`*text*`, default) or 0 (stripped) | 2 tags                     |
+| Labeled link            | 4 structural tokens | 2 structural tokens                   | 3 structural tokens        |
+| Block separator         | 2 newlines          | 1 newline                             | implicit                   |
+| Machine-readable        | ✗ (ambiguous)       | ✓                                     | ✓                          |
+| AI-first                | ✗                   | ✓                                     | ✗                          |
+| Human-authorable        | ✓                   | ✗ (generated)                         | ✗                          |
+| HTTP negotiable         | ✗                   | ✓                                     | ✓                          |
+| Streamable              | partial             | ✓                                     | partial                    |
 
 ---
 
-*End of MLite Specification v0.1.0-draft*
+_End of MLite Specification v0.1.0_

@@ -27,22 +27,36 @@ mlite-mcp                 FastMCP server exposing read_file + read_url tools
 mlite/
 ├── CLAUDE.md             (this file)
 ├── SPEC.md               (full format specification — source of truth)
+├── README.md
 ├── pyproject.toml
 ├── mlite/
 │   ├── __init__.py
 │   ├── adapters/
 │   │   ├── __init__.py   AdapterRegistry — dispatches on extension or MIME type
 │   │   ├── base.py       FormatAdapter dataclass / abstract base
-│   │   ├── markdown.py   MarkdownAdapter (priority 1 — implement first)
-│   │   └── html.py       HTMLAdapter (priority 2)
-│   ├── parser.py         MLite → AST (for round-trip validation, lower priority)
+│   │   ├── markdown.py   MarkdownAdapter
+│   │   ├── html.py       HTMLAdapter (BeautifulSoup4)
+│   │   └── py_adapter.py PythonAdapter (envelope + optional doc extraction)
 │   ├── cli.py            click entrypoint with --stats flag
-│   └── mcp_server.py     FastMCP server
-└── tests/
-    ├── fixtures/          .md and .html source files for regression testing
-    ├── test_markdown.py
-    ├── test_html.py
-    └── test_cli.py
+│   └── mcp_server.py     FastMCP server (read_file + read_url tools)
+├── tests/
+│   ├── fixtures/          .md, .html, .py source files + .mlt golden outputs
+│   │                      + .qa.json Q&A pairs for eval
+│   ├── corpus/            real-world URLs for corpus eval
+│   ├── test_markdown.py
+│   ├── test_html.py
+│   ├── test_python.py
+│   ├── test_cli.py
+│   ├── test_mcp_server.py
+│   └── test_corpus.py     token-savings regression on real URLs
+├── scripts/
+│   ├── run_eval.py        Q&A agreement eval (fixtures + corpus modes)
+│   ├── generate_qa.py     LLM-based Q&A generation for corpus files
+│   ├── fetch_corpus.py    Download and cache corpus HTML pages
+│   └── corpus_sources.json  Real-world URL list for corpus eval
+└── docs/
+    ├── eval-design.md     Q&A eval methodology
+    └── eval-baseline.md   Baseline results (100% agreement, score 1.106)
 ```
 
 ---
@@ -56,7 +70,8 @@ Indentation for headings is a candidate for v0.2 via `%heading-style indent` dir
 Closing delimiter is explicit — NOT indentation-based. This is non-negotiable; indentation
 breaks code content.
 
-**Emphasis:** Stripped by default. Preserved as `*text*` only with `preserve_emphasis=True`.
+**Emphasis:** Preserved as `*text*` by default (`preserve_emphasis=True`).
+Strip with `preserve_emphasis=False` / `--no-preserve-emphasis`.
 
 **Links:** Inverted from Markdown — URL first, label optional in brackets: `https://url[label]`
 
@@ -68,33 +83,49 @@ These decisions are documented with full rationale in SPEC.md §10 (Alternatives
 
 ---
 
-## Implementation Order
+## Implementation Status
 
-### Phase 1 — Core (implement this first)
+All four phases are complete.
+230 tests pass.
+
+### Phase 1 — Core ✓
 
 1. `mlite/adapters/base.py` — `FormatAdapter` dataclass
-2. `mlite/adapters/__init__.py` — `AdapterRegistry` with `for_path()` and `for_mime()`
-3. `mlite/adapters/markdown.py` — `MarkdownAdapter`
-   - Use `mistune` or `markdown-it-py` to parse to AST, then walk the AST to emit MLite
-   - Do NOT use regex on Markdown source — the AST walk is the only correct approach
-   - All block types from SPEC.md §3.2 must be covered
-4. `tests/test_markdown.py` — round-trip fixtures
-5. `mlite/cli.py` — `mlite` command with `--stats` (tiktoken token delta to stderr)
+2. `mlite/adapters/__init__.py` — `AdapterRegistry` with `for_path()`, `for_mime()`, lazy `get_registry()`
+3. `mlite/adapters/markdown.py` — `MarkdownAdapter` via mistune 3.x AST walk
+   - `block_code`, `table`, `strikethrough`, `softbreak` plugins active
+   - `preserve_emphasis=True` default (normalized to `*text*`)
+4. `tests/test_markdown.py` — 5 golden-file regressions + 25 unit tests
+5. `mlite/cli.py` — `mlite` command with `--stats` (tiktoken cl100k_base, delta to stderr)
 
-### Phase 2 — MCP Server
+### Phase 2 — MCP Server ✓
 
-6. `mlite/mcp_server.py` — FastMCP server with `read_file` and `read_url` tools
-7. `pyproject.toml` — package entry points for both `mlite` CLI and `mlite-mcp` server
+6. `mlite/mcp_server.py` — FastMCP 3.x server, `@mcp.tool()` decorator
+   - `read_file(path, preserve_emphasis=True)` — dispatches via `AdapterRegistry`
+   - `read_url(url, preserve_emphasis=True)` — sniffs MIME from `Content-Type`, falls back to URL extension
+7. `pyproject.toml` — `[project.scripts]` entries for `mlite` and `mlite-mcp`
 
-### Phase 3 — HTML Adapter
+### Phase 3 — HTML Adapter ✓
 
-8. `mlite/adapters/html.py` — `HTMLAdapter` using `beautifulsoup4`
-9. `tests/test_html.py`
+8. `mlite/adapters/html.py` — BeautifulSoup4 DOM walker
+   - Strips `<script>`, `<style>`, `<head>`, HTML comments
+   - Handles headings, paragraphs, code blocks, lists, tables, blockquotes, links, images, hr
+9. `tests/test_html.py` — 4 golden-file regressions + 25 unit tests
 
-### Phase 4 — Code Adapters (Python first)
+### Phase 4 — Python Adapter ✓
 
-10. `mlite/adapters/python.py` — envelope pattern with optional docstring extraction
-11. Extend `AdapterRegistry` with code adapter registrations
+10. `mlite/adapters/py_adapter.py` — envelope pattern
+    - Basic mode: `= filename.py` heading + verbatim `\`python` block
+    - `extract_docs=True`: adds `== Module Docstring`, `== Functions`, `== Classes` sections
+    - Falls back to basic mode on `SyntaxError` / `ValueError`
+11. `tests/test_python.py` — 2 golden-file regressions + 22 unit tests
+
+### Eval Framework ✓
+
+- `scripts/run_eval.py` — SHA256-keyed LLM response cache, extractor+judge two-LLM pattern
+- `tests/fixtures/*.qa.json` — 25 hand-authored Q&A pairs across all fixture types
+- `docs/eval-baseline.md` — 100% agreement, -9.4% tokens, score 1.106
+- `tests/test_corpus.py` — token-savings regression on real-world URLs
 
 ---
 
@@ -115,6 +146,7 @@ pytest-cov
 ```
 
 Use `uv` for all package management. The project should be installable as:
+
 ```bash
 uv pip install -e ".[dev]"
 mlite --help
@@ -140,6 +172,7 @@ mlite-mcp  # starts the MCP server
 The `read_file` and `read_url` tool descriptions in `mcp_server.py` are not documentation —
 they are the steering mechanism that causes Claude to prefer these tools over the built-in
 `Read` tool for supported file types. Write them carefully. The description should make clear:
+
 - Which file types trigger conversion
 - That the output is MLite (token-efficient)
 - That unsupported types pass through verbatim
@@ -148,26 +181,31 @@ they are the steering mechanism that causes Claude to prefer these tools over th
 
 ## Testing Philosophy
 
-Regression tests should use real fixture files in `tests/fixtures/`. At minimum:
+Regression tests use real fixture files in `tests/fixtures/`.
+Current Markdown fixtures: `basic`, `code_heavy`, `table`, `nested`, `emphasis`.
+Current HTML fixtures: `basic`, `table`, `emphasis`, `links_images`.
+Current Python fixtures: `basic`, `extract_docs`.
 
-- `basic.md` — headings, paragraphs, lists, a code block, a link
-- `code_heavy.md` — multiple code blocks in multiple languages  
-- `table.md` — tables with various column counts
-- `nested.md` — nested lists, nested blockquotes
-- `emphasis.md` — bold, italic, inline code (to verify stripping behavior)
+Each fixture has a corresponding `.mlt` golden output file.
+Tests assert exact match against the golden file.
+When converter behavior changes intentionally, update the golden files explicitly — do not auto-update them.
 
-Each fixture should have a corresponding `.mlt` golden output file. Tests assert exact
-match against the golden file. When the converter behavior changes intentionally, update
-the golden files explicitly — do not auto-update them.
+The `--stats` CLI flag uses tiktoken cl100k_base.
+Token savings for `basic.md` should be ≥10%.
+HTML fixtures should save ≥25%.
 
-The `--stats` CLI flag uses tiktoken. Token savings for `basic.md` should be ≥10%.
-If it is not, something is wrong with the conversion.
+### Q&A Eval
+
+`tests/fixtures/*.qa.json` files contain 25 hand-authored question/answer pairs.
+`scripts/run_eval.py --fixtures` runs the full eval against these pairs.
+Threshold: ≥98% agreement (fixtures), ≥90% (corpus).
+Baseline: 100% agreement, score 1.106 (see `docs/eval-baseline.md`).
 
 ---
 
 ## Claude Code MCP Registration
 
-Once `mlite-mcp` is installable, register it with:
+Register the installed server with:
 
 ```json
 {
@@ -183,18 +221,19 @@ for project-level.
 
 ---
 
-## Open Questions (Do Not Block On These — Note and Continue)
+## Open Questions (v0.2+)
 
-From SPEC.md §11, the ones most likely to surface during implementation:
+1. **Emphasis round-trip** — `*text*` collapses bold and italic; ambiguous on round-trip.
+   Acceptable for v0.1.
+   Default changed to `preserve_emphasis=True` to reduce information loss.
 
-1. **Emphasis round-trip** — collapsing bold+italic to `*text*` means round-trip is ambiguous.
-   For v0.1 this is acceptable. Note it in the adapter but do not solve it yet.
+2. **Anchor IDs on headings** — `= Heading {#anchor}` syntax reserved but not emitted.
+   CommonMark does not standardize `{#id}`.
 
-2. **Anchor IDs on headings** — reserve `= Heading {#anchor}` syntax in the parser but do
-   not emit it from the Markdown adapter yet. The Markdown spec allows `{#id}` in some
-   parsers but it is not standard CommonMark.
+3. **Math blocks** — currently emitted as `` `latex `` typed code blocks. v0.2 consideration.
 
-3. **Math blocks** — treat as typed code block for now: `` `latex ``. Revisit in v0.2.
+4. **Tokenizer variance** — `--stats` uses cl100k_base (GPT-4) as a proxy.
+   Cross-tokenizer analysis (LLaMA, Gemini, Claude) is post-v1 work.
 
-4. **Tokenizer variance** — `--stats` uses cl100k_base (GPT-4 tokenizer) as a proxy.
-   This is good enough for development. Cross-tokenizer analysis is post-v1 work.
+5. **Additional code adapters** — JavaScript/TypeScript, Rust, Go, etc. not yet implemented.
+   The `py_adapter.py` envelope pattern is the reference implementation.
