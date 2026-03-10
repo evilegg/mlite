@@ -131,9 +131,10 @@ def _normalise(text: str) -> str:
 
 def _key_terms(answer: str) -> list[str]:
     """Extract meaningful tokens from an expected answer string."""
-    # Split on whitespace and common separators; drop short stop-words
-    tokens = re.split(r"[\s,/|]+", answer)
-    stop = {"and", "or", "the", "a", "an", "of", "to", "in", "is", "are"}
+    # Split on whitespace, common separators, AND quote characters so that
+    # f-string tokens like f"Hello," don't produce a spurious fHello term.
+    tokens = re.split(r"""[\s,/|"'`]+""", answer)
+    stop = {"and", "or", "the", "a", "an", "of", "to", "in", "is", "are", "f"}
     return [t for t in tokens if len(t) > 1 and t.lower() not in stop]
 
 
