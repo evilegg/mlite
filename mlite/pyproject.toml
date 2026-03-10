@@ -34,4 +34,7 @@ mlite-mcp = "mlite.mcp_server:run"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 # Run everything by default.  Use -m "not corpus" to skip the stress tests.
-markers = ["corpus: real-world Markdown savings stress test"]
+markers = [
+    "corpus: real-world Markdown savings stress test",
+    "integration: live Anthropic API calls — requires ANTHROPIC_API_KEY",
+]
